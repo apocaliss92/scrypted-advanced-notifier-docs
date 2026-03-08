@@ -27,7 +27,7 @@ npm run start
 
 ## Docker
 
-Single image (Node build + nginx), same pattern as [zentik-notifier/docs](https://github.com/apocaliss92/zentik-notifier/tree/main/docs):
+Next.js server (API routes enabled for changelog, plugin info):
 
 ```bash
 docker build -t scrypted-docs .
@@ -38,9 +38,9 @@ Open [http://localhost:8080](http://localhost:8080).
 
 ## Deployment (Railway)
 
-Deploys via GitHub Actions on push to `main` or tags `v*.*.*`. Railway builds the Docker image.
+Deploys via GitHub Actions on push to `main` or tags `v*.*.*`. Railway builds the Docker image and runs the Next.js server. API routes (`/api/plugin-info/*`) work out of the box.
 
-**Setup:** Add secrets `RAILWAY_TOKEN` and `RAILWAY_SERVICE_ID` (from [Railway tokens](https://railway.app/account/tokens) and service settings).
+**Setup:** Add secrets `RAILWAY_TOKEN` and `RAILWAY_SERVICE_ID` in GitHub. Railway sets `PORT` automatically.
 
 ## Documented Plugins
 

@@ -1,4 +1,4 @@
-FROM node:22-alpine AS builder
+FROM node:22-alpine
 
 WORKDIR /app
 
@@ -7,14 +7,10 @@ RUN npm ci --ignore-scripts
 
 COPY . .
 RUN npx fumadocs-mdx
-ENV OUTPUT_STATIC=true
 RUN npm run build
 
-FROM nginx:alpine
-
-COPY --from=builder /app/out /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
-
+ENV PORT=8080
+ENV HOSTNAME=0.0.0.0
 EXPOSE 8080
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["npm", "run", "start"]

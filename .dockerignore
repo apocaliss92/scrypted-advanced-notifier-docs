@@ -15,6 +15,3 @@ coverage
 .vscode
 .idea
 
-# Incompatible with static export (API routes, llms)
-app/api
-app/llms.mdx
