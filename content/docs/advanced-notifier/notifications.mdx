@@ -1,53 +1,74 @@
 ---
 title: Notifications
-description: Customized notification delivery and supported notifiers
+description: Supported notifiers, settings, and text customization
 ---
 
 # Notifications
 
-The plugin provides customized notification delivery based on rules. Each rule can be activated by sensors, time ranges, security system status, and more.
+The plugin delivers customized notifications based on rules. Each rule can be triggered by sensors, time ranges, security system status, and more.
 
 ## Supported Notifiers
 
 | Notifier | Notes |
 |----------|-------|
-| **Zentik** | Full round app. iOS, watchOS, iPad, macOS. [Plugin](https://www.npmjs.com/package/@apocaliss92/scrypted-zentik) |
-| **Native Scrypted** | Scrypted iPhone app, etc. |
+| **Zentik** | Full-featured app: iOS, watchOS, iPad, macOS. Push, history, custom actions. [Setup guide](/docs/zentik) |
+| **Native Scrypted** | Scrypted iPhone app |
 | **Ntfy** | [ntfy.sh](https://ntfy.sh) |
 | **Home Assistant** | Push notifications |
 | **Pushover** | Push notifications |
 | **Telegram** | Telegram bot |
 
-Zentik is highly suggested for a rich experience (push + history). Otherwise combine notifiers: Pushover/Ntfy for storage + Home Assistant/NVR with lowest priority for rich notifications with actions.
+**Zentik** is recommended for the best experience: rich notifications, history, and actions. For other setups, you can combine notifiers (e.g. Pushover/Ntfy for storage, Home Assistant/NVR for rich notifications with actions).
 
-## Required Parameters
+## General Notifier Settings
 
-For successful notifications:
+When you extend a notifier with Advanced Notifier, each notifier device gets its own settings panel. Configure them under the notifier device page in Scrypted.
 
-- **Scrypted token** — Token stored on the Scrypted entity in Home Assistant
-- **NVR url** — URL to the NVR instance (must be accessible from outside)
+![Notifier general settings](/assets/Notifications/Notifier%20general%20settings.png)
 
-## Per-Rule Configuration
+| Setting | Description |
+|---------|-------------|
+| **Enabled** | Enable or disable this notifier |
+| **Translations** | Use the plugin **Texts** section to customize notification messages |
+| **AI descriptions** | Use configured AI to generate notification text from the image |
+| **Notification key to edit** | Which payload key the plugin edits (body, title, etc.). Adjust if the wrong text appears in notifications |
+| **Enable on all notifications** | Handle all notifications on this notifier via the plugin. Useful for testing |
+| **Scheduler** | Restrict notifications to a time range |
+| **Start time / End time** | Time window when notifications are sent (when Scheduler is enabled) |
+| **Cloud URL** (Webhooks) | Read-only URL for POST webhooks after each notification |
 
-Each notifier is configurable per rule: actions, `addSnoozeActions`, priority. Default actions can be set per camera and are added to each notification.
+## Notification Text Generation
 
-All notifiers support critical notifications.
+Notification text is built from the **Texts** section of the plugin. You can define templates with placeholders like `${room}`, `${time}`, `${classnameText}`, `${nvrLink}`.
 
-## Disabling Notifications
+### Plugin Texts (global)
 
-- **Per camera**: Advanced Notifier → Notifier → Notifications enabled (also on MQTT)
-- **Globally**: General tab of the plugin
+Configure default texts in **Advanced Notifier** → **Texts**. These apply to all notifiers unless overridden.
 
-## Scrypted NVR Notifiers
+![Texts translations](/assets/Notifications/Texts%20translations.png)
 
-The plugin supports scripting of the NVR built-in notifiers:
+### Override on Notifier
 
-- Discover to MQTT
-- Notifier/camera notifications disabled
-- Schedule notifications on cameras and notifiers
-- Translate notifications via **Texts** section (enabled by default)
-- AI-generated descriptions: enable AI flag on both camera and notifier
+Each extended notifier can override the plugin texts. Enable **Translations** in the notifier settings, then edit the **Texts** subgroup on that notifier.
 
-**As plugin notifier (with rules):** Keep notifier enabled but disable all detection classes on the device page.
+![Notifier texts translations](/assets/Notifications/Notifier%20texts%20translations.png)
 
-**To enhance NVR only:** Extend the notifier with the plugin—no other changes needed.
+### Detection Classes
+
+The **Detection classes** subgroup lets you customize labels for each detection type (Person, Animal, Vehicle, Motion, etc.). Useful for localization or custom wording.
+
+![Classes translations](/assets/Notifications/Classes%20translations.png)
+
+## Camera-Specific Notification Settings
+
+Per-camera notification options are under **Advanced Notifier** → **Notifier** on each camera.
+
+![Camera notifier settings](/assets/Notifications/Camera%20notifier%20settings.png)
+
+| Setting | Description |
+|---------|-------------|
+| **Notifications enabled** | Enable or disable notifications for this camera |
+| **AI descriptions** | Use AI to generate notification text (requires AI configured in plugin) |
+| **Scheduler** | Restrict notifications to a time range for this camera |
+| **Start time / End time** | Time window when notifications are sent |
+| **Default actions** | Actions shown on every notification, e.g. `{"action":"open_door","title":"Open door","icon":"sfsymbols:door"}` |

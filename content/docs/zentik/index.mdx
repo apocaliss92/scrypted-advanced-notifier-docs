@@ -1,30 +1,55 @@
 ---
 title: Zentik
-description: Push notifications via Zentik
+description: Push notifications via Zentik — apps, plugin, setup
 ---
 
-# Zentik Plugin
+<PluginTitle slug="zentik" title="Zentik" />
 
-Zentik integration for Scrypted. Send push notifications through [Zentik](https://zentik.io).
+Zentik integration for Scrypted. Send push notifications through [Zentik](https://zentik.io). Full-featured app with rich notifications, history, and custom actions — recommended for use with [Advanced Notifier](/docs/advanced-notifier/getting-started).
 
 ## Features
 
 - **DeviceProvider** — Create notifier devices
 - **DeviceCreator** — Add devices with access token and bucket ID
 
-## Installation
+## Apps & Downloads
 
-1. Install **Zentik Plugin** from the Scrypted plugin store
-2. Create a device with your Zentik credentials
+| Platform | Link |
+|----------|------|
+| **iOS (App Store)** | [App Store](https://apps.apple.com/de/app/zentik-notifier/id6749312723) |
+| **iOS (TestFlight beta)** | [TestFlight](https://testflight.apple.com/join/dFqETQEm) |
+| **Web (PWA)** | [notifier.zentik.app](https://notifier.zentik.app) |
+
+## Scrypted Plugin
+
+- **NPM:** [@apocaliss92/scrypted-zentik](https://www.npmjs.com/package/@apocaliss92/scrypted-zentik)
+
+Install from Scrypted: **Plugins** → search **Zentik** → **Install**.
 
 ## Setup
 
-1. Login on the Zentik app
-2. Open **Settings → Access token**
-3. Create a new token and copy it
-4. Go to **Buckets** and copy the bucket ID from the provided button
-5. In Scrypted, add a Zentik device and enter the token and bucket ID
+1. Login on the Zentik app (or create an account)
+2. Open **Settings → Access token** and create a new token
+3. Go to **Buckets** and copy the bucket ID
+4. In Scrypted, add a Zentik device with token and bucket ID
+5. Configure per-camera settings if needed (Advanced Notifier → Notifier on each camera)
 
 :::info Bucket Access
 The shared bucket must have **write access** (or you must be the owner).
 :::
+
+## Advanced Configuration
+
+Texts and translations can be customized in the notifier settings.
+
+## Resources
+
+| Resource | Link |
+|----------|------|
+| **Zentik website** | [zentik.io](https://zentik.io) |
+| **Documentation** | [notifier-docs.zentik.app](https://notifier-docs.zentik.app) |
+| **Scrypted integration** | [Zentik + Scrypted](https://notifier-docs.zentik.app/docs/integrations/scrypted) |
+| **GitHub** | [Zentik-notifier/zentik-notifier](https://github.com/Zentik-notifier/zentik-notifier) |
+| **Discord** | [discord.gg/DzhJ4s7N](https://discord.gg/DzhJ4s7N) |
+
+<PluginChangelog slug="zentik" />

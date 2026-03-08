@@ -1,0 +1,55 @@
+---
+title: Home Assistant
+description: Home Assistant connection, automations, and integration
+---
+
+# Home Assistant
+
+The Home Assistant connection is required to use **Home Assistant notifiers** for push notifications. The plugin also generates automations needed for **notification snoozing** (snooze actions on push notifications) and for the **onboard [alarm system](/docs/advanced-notifier/alarm-system)** (arming, disarming, triggering).
+
+## Connection Steps
+
+### Step 1: Enable Home Assistant
+
+Go to **General → General** and enable **Homeassistent enabled**.
+
+![Enable Home Assistant in General tab](/assets/Homeassistant/HA%20-%20enable.png)
+
+### Step 2: Configure Credentials
+
+Go to **General → Homeassistant**:
+
+- **If the Home Assistant plugin is already configured in Scrypted** — check **Use HA plugin credentials** to reuse the URL and token from the Scrypted Home Assistant plugin.
+
+![Use Home Assistant plugin credentials](/assets/Homeassistant/HA%20-%20auto%20login.png)
+
+- **Otherwise** — uncheck **Use HA plugin credentials** and set **Protocol** (http/https), **Address** (e.g. `192.168.1.1:8123`), and **HA Personal access token** manually. Create a Long-Lived Access Token in Home Assistant under **Profile → Security → Long-Lived Access Tokens**.
+
+![Manual Home Assistant credentials](/assets/Homeassistant/HA%20-%20manual%20login.png)
+
+### Step 3: Scrypted Token (for proxy app)
+
+The **Scrypted token** in **General → Homeassistant** is used only to allow opening the camera stream through the Home Assistant proxy app. This token is found on the Home Assistant entity created by the Scrypted integration (e.g. `sensor.scrypted_token_{ip}`).
+
+![Scrypted token step 1](/assets/Homeassistant/HA%20-%20token%20step%201.png)
+
+![Scrypted token step 2](/assets/Homeassistant/HA%20-%20token%20step%202.png)
+
+![Scrypted token step 3](/assets/Homeassistant/HA%20-%20token%20step%203.png)
+
+![Scrypted token step 4](/assets/Homeassistant/HA%20-%20token%20step%204.png)
+
+### Step 4: Generate Automations
+
+When Home Assistant is enabled, the plugin automatically generates two automations in Home Assistant:
+
+1. **Snooze automation** (`scrypted_advanced_notifier_snooze_action`) — Handles snooze actions from push notifications (e.g. "Snooze 15 min").
+2. **Alarm automation** (`scrypted_advanced_security_system_alarm_action`) — Handles alarm panel commands (arm, disarm, trigger) for the onboard alarm system.
+
+These automations are created at plugin startup when **Homeassistent enabled** is on. If you enable Home Assistant after initial setup, restart the plugin or toggle the setting to trigger generation.
+
+## Related
+
+- [MQTT](/docs/advanced-notifier/mqtt) — MQTT autodiscovery exposes entities to Home Assistant via MQTT
+- [Notifications](/docs/advanced-notifier/notifications) — Configure Home Assistant as a notifier
+- [Advanced alarm system](/docs/advanced-notifier/alarm-system) — Alarm panel integration

@@ -5,17 +5,24 @@
   "pages": [
     "getting-started",
     "mqtt",
+    "homeassistant",
+    "people-tracker",
     "notifications",
+    "nvr-notifications-passthrough",
+    "notifications-customization",
+    "ai-setup",
+    "audio-analysis",
+    "post-processing",
+    "sequences",
     "rules",
     "rules-detection",
-    "rules-recording",
-    "rules-occupancy",
     "rules-timelapse",
+    "rules-occupancy",
     "rules-audio",
-    "sequences",
-    "stored-images",
-    "camera-settings",
+    "rules-recording",
+    "storage-events",
     "webhooks",
-    "alarm-system"
+    "alarm-system",
+    "test-section"
   ]
 }

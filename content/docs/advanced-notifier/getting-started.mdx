@@ -3,11 +3,15 @@ title: Getting Started
 description: Install and configure Advanced Notifier
 ---
 
-# Getting Started
+<PluginTitle slug="advanced-notifier" title="Advanced Notifier" />
 
 ## What Advanced Notifier Does
 
-Advanced Notifier is a comprehensive Scrypted plugin that:
+Advanced Notifier lets you easily integrate with external systems such as [Frigate](/docs/frigate-bridge/getting-started) or internal ones like NVR, so you can unify multiple systems in one place.
+
+**Devices used with Advanced Notifier must be extended with the Advanced Notifier extension. Supported types: Cameras, Sensors, and Notifiers.** 
+
+It is a comprehensive Scrypted plugin that:
 
 - **MQTT / Home Assistant** — Exposes camera metadata and detection state to MQTT with full Home Assistant autodiscovery
 - **Notification rules** — Detection, occupancy, timelapse, audio, and recording rules with customizable notifiers
@@ -20,7 +24,12 @@ The plugin also serves as a hook for an **iOS / PWA app** for live view and even
 
 ## Next Steps
 
-- [MQTT](/docs/advanced-notifier/mqtt) — Enable MQTT and Home Assistant
+- [MQTT](/docs/advanced-notifier/mqtt) — Enable MQTT
+- [Home Assistant](/docs/advanced-notifier/homeassistant) — Integration and autodiscovery
 - [Notifications](/docs/advanced-notifier/notifications) — Configure notifiers
-- [Rules](/docs/advanced-notifier/rules) — Detection, occupancy, timelapse, audio
+- [Rules](/docs/advanced-notifier/rules) — Detection, occupancy, timelapse, audio, recording
+- [Sequences](/docs/advanced-notifier/sequences) — Action sequences
+- [Webhooks](/docs/advanced-notifier/webhooks) — Event webhooks
 - [GitHub Repository](https://github.com/apocaliss92/scrypted-advanced-notifier) — Source code and issues
+
+<PluginChangelog slug="advanced-notifier" />
