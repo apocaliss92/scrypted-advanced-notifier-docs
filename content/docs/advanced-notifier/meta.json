@@ -3,12 +3,10 @@
   "defaultOpen": true,
   "collapsible": true,
   "pages": [
-    "getting-started",
     "mqtt",
     "homeassistant",
     "notifications",
     "nvr-notifications-passthrough",
-    "notifications-customization",
     "ai-setup",
     "audio-analysis",
     "post-processing",
@@ -23,6 +21,8 @@
     "webhooks",
     "alarm-system",
     "people-tracker",
+    "camera-settings",
+    "stored-images",
     "test-section"
   ]
 }

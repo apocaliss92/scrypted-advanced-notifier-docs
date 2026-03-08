@@ -1,0 +1,34 @@
+---
+title: Advanced Notifier
+description: MQTT, notification rules, webhooks, alarm system, sequences, iOS/PWA app
+---
+
+<PluginTitle slug="advanced-notifier" title="Advanced Notifier" />
+
+Advanced Notifier lets you easily integrate with external systems such as [Frigate](/docs/frigate-bridge) or internal ones like NVR, so you can unify multiple systems in one place.
+
+**Devices used with Advanced Notifier must be extended with the Advanced Notifier extension. Supported types: Cameras, Sensors, and Notifiers.**
+
+## Features
+
+- **MQTT / Home Assistant** — Exposes camera metadata and detection state to MQTT with full Home Assistant autodiscovery
+- **Notification rules** — Detection, occupancy, timelapse, audio, and recording rules with customizable notifiers
+- **Webhooks** — Exposes webhooks with relevant events, rule artifacts, and latest images per detection type per camera
+- **Advanced alarm system** — Security system tied to detection rules, MQTT, and HomeKit
+- **Sequences** — Define action sequences (PTZ, scripts, switches, lock/entry) executable via rules in various conditions
+- **MP4 / GIF generation** — Generates video clips and GIFs for notifications and rule artifacts
+
+The plugin also serves as a hook for an **iOS / PWA app** for live view and events, and acts as a bridge for the [Frigate Bridge](/docs/frigate-bridge) plugin. The app is available as a PWA served by Scrypted itself; iOS beta via [TestFlight](https://testflight.apple.com/join/CYnbJFqb).
+
+## Quick Links
+
+<Cards>
+  <Card title="Getting Started" href="/docs/advanced-notifier/getting-started" />
+  <Card title="MQTT" href="/docs/advanced-notifier/mqtt" />
+  <Card title="Notifications" href="/docs/advanced-notifier/notifications" />
+  <Card title="Rules" href="/docs/advanced-notifier/rules" />
+  <Card title="Sequences" href="/docs/advanced-notifier/sequences" />
+  <Card title="Webhooks" href="/docs/advanced-notifier/webhooks" />
+</Cards>
+
+<PluginChangelog slug="advanced-notifier" />
