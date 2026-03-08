@@ -1,0 +1,25 @@
+---
+title: Timelapse Rules
+description: Generate timelapse videos (camera only)
+---
+
+# Timelapse Rules
+
+Define a timeframe; the plugin collects frames and generates a clip at the end. Timelapses appear as videoclips in the NVR app if **Enable Camera** is enabled on the plugin page.
+
+## Setup
+
+1. Add a new text in **Timelapse rules** and save
+2. Define week days and start/end times (e.g. 11pm–8am)
+3. Set notifiers for the generated clip
+
+## Options
+
+| Setting | Description |
+|---------|-------------|
+| Notification text | Message for the notification |
+| Frames acquisition delay | Interval between frames. Non-motion detections always add a frame |
+| Timelapse framerate | Depends on timespan and desired clip length |
+| Generate now | Reuse frames from previous session (stored until next session) |
+
+If Home Assistant notifier is used and the clip is &lt;50MB, it will show as push notification preview.

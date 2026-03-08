@@ -1,0 +1,46 @@
+---
+title: Getting Started
+description: Install and configure Advanced Notifier
+---
+
+# Getting Started
+
+## What Advanced Notifier Does
+
+Advanced Notifier is a comprehensive Scrypted plugin that:
+
+- **MQTT / Home Assistant** — Exposes camera metadata and detection state to MQTT with full Home Assistant autodiscovery
+- **Notification rules** — Detection, occupancy, timelapse, audio, and recording rules with customizable notifiers
+- **Webhooks** — Exposes webhooks with relevant events, rule artifacts, and latest images per detection type per camera
+- **Advanced alarm system** — Security system tied to detection rules, MQTT, and HomeKit
+- **Sequences** — Define action sequences (PTZ, scripts, switches, lock/entry) executable via rules in various conditions
+- **MP4 / GIF generation** — Generates video clips and GIFs for notifications and rule artifacts
+
+The plugin also serves as a hook for an **iOS / PWA app** for live view and events, and acts as a bridge for the [Frigate Bridge](/docs/frigate-bridge/getting-started) plugin. The app is available as a PWA served by Scrypted itself; iOS beta via [TestFlight](https://testflight.apple.com/join/CYnbJFqb).
+
+## Prerequisites
+
+- [Scrypted](https://scrypted.app) installed and running
+- Frigate NVR or compatible camera source (optional, for NVR features)
+- MQTT broker (for MQTT/Home Assistant integration)
+
+## Installation
+
+1. Open Scrypted and go to **Plugins**
+2. Search for **Advanced Notifier**
+3. Install the plugin
+
+## Basic Setup
+
+After installation:
+
+1. **Add Cameras** — Link your Scrypted cameras to the plugin
+2. **Configure MQTT** (optional) — Set broker URL and credentials for Home Assistant autodiscovery
+3. **Create Rules** — Define detection rules and notification behavior
+
+## Next Steps
+
+- [MQTT](/docs/advanced-notifier/mqtt) — Enable MQTT and Home Assistant
+- [Notifications](/docs/advanced-notifier/notifications) — Configure notifiers
+- [Rules](/docs/advanced-notifier/rules) — Detection, occupancy, timelapse, audio
+- [GitHub Repository](https://github.com/apocaliss92/scrypted-advanced-notifier) — Source code and issues

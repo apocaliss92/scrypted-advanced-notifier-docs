@@ -1,0 +1,53 @@
+---
+title: Notifications
+description: Customized notification delivery and supported notifiers
+---
+
+# Notifications
+
+The plugin provides customized notification delivery based on rules. Each rule can be activated by sensors, time ranges, security system status, and more.
+
+## Supported Notifiers
+
+| Notifier | Notes |
+|----------|-------|
+| **Zentik** | Full round app. iOS, watchOS, iPad, macOS. [Plugin](https://www.npmjs.com/package/@apocaliss92/scrypted-zentik) |
+| **Native Scrypted** | Scrypted iPhone app, etc. |
+| **Ntfy** | [ntfy.sh](https://ntfy.sh) |
+| **Home Assistant** | Push notifications |
+| **Pushover** | Push notifications |
+| **Telegram** | Telegram bot |
+
+Zentik is highly suggested for a rich experience (push + history). Otherwise combine notifiers: Pushover/Ntfy for storage + Home Assistant/NVR with lowest priority for rich notifications with actions.
+
+## Required Parameters
+
+For successful notifications:
+
+- **Scrypted token** — Token stored on the Scrypted entity in Home Assistant
+- **NVR url** — URL to the NVR instance (must be accessible from outside)
+
+## Per-Rule Configuration
+
+Each notifier is configurable per rule: actions, `addSnoozeActions`, priority. Default actions can be set per camera and are added to each notification.
+
+All notifiers support critical notifications.
+
+## Disabling Notifications
+
+- **Per camera**: Advanced Notifier → Notifier → Notifications enabled (also on MQTT)
+- **Globally**: General tab of the plugin
+
+## Scrypted NVR Notifiers
+
+The plugin supports scripting of the NVR built-in notifiers:
+
+- Discover to MQTT
+- Notifier/camera notifications disabled
+- Schedule notifications on cameras and notifiers
+- Translate notifications via **Texts** section (enabled by default)
+- AI-generated descriptions: enable AI flag on both camera and notifier
+
+**As plugin notifier (with rules):** Keep notifier enabled but disable all detection classes on the device page.
+
+**To enhance NVR only:** Extend the notifier with the plugin—no other changes needed.

@@ -1,0 +1,33 @@
+---
+title: Plugins Monitor
+description: Schedule diagnostics, plugin restarts, and updates
+---
+
+# Plugins Monitor
+
+Scrypted plugin to schedule diagnostics, plugin restarts, and updates. Keeps your Scrypted instance healthy and up to date.
+
+## Features
+
+- **Scheduled diagnostics** — Run Scrypted diagnostics on a schedule
+- **Plugin restarts** — Restart plugins automatically
+- **Plugin updates** — Check and apply plugin updates
+- **Health checks** — Monitor plugin health
+
+## Installation
+
+1. Install **Scrypted Plugins Monitor** from the Scrypted plugin store
+2. Configure schedule and options in settings
+
+## Configuration
+
+| Setting | Description |
+|---------|-------------|
+| Schedule | Cron expression for when to run (e.g. daily at 3 AM) |
+| Diagnostics | Enable/disable diagnostic runs |
+| Restart | Enable/disable plugin restarts |
+| Update | Enable/disable update checks |
+
+## Dependencies
+
+Uses `@scrypted/diagnostics` for diagnostic runs and `node-cron` for scheduling.

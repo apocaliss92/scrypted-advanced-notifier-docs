@@ -1,0 +1,21 @@
+{
+  "title": "Advanced Notifier",
+  "defaultOpen": true,
+  "collapsible": true,
+  "pages": [
+    "getting-started",
+    "mqtt",
+    "notifications",
+    "rules",
+    "rules-detection",
+    "rules-recording",
+    "rules-occupancy",
+    "rules-timelapse",
+    "rules-audio",
+    "sequences",
+    "stored-images",
+    "camera-settings",
+    "webhooks",
+    "alarm-system"
+  ]
+}

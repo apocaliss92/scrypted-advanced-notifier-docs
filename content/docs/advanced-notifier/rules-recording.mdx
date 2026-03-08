@@ -1,0 +1,19 @@
+---
+title: Recording Rules
+description: Record videoclips on detection (camera only)
+---
+
+# Recording Rules
+
+Recording rules let cameras record configurable videoclips. Useful when NVR is overkill; the app still shows clips in a nice way.
+
+## Criteria
+
+| Setting | Description |
+|---------|-------------|
+| Detection classes | What initially triggers the recording |
+| Score threshold | Minimum score (leave empty for any) |
+| Minimum delay between clips | Seconds between clips |
+| Post event seconds | Minimum seconds to record after start. Camera prebuffer adds pre-event |
+| Max clip length | Cap in seconds; further detections prolong the clip |
+| Prolong clip on motion | Prolong clip for simple motion events |

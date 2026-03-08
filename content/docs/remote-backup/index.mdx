@@ -1,0 +1,35 @@
+---
+title: Remote Backup
+description: Remote backup via Samba/SMB and SFTP
+---
+
+# Remote Backup
+
+Scrypted plugin for remote backup. Backs up Scrypted data to Samba/SMB shares or SFTP servers.
+
+## Features
+
+- **Samba/SMB** — Backup to Windows shares or Samba servers
+- **SFTP** — Backup to SSH/SFTP servers
+- **Scheduled backups** — Cron-based scheduling
+
+## Installation
+
+1. Install **Scrypted Remote Backup** from the Scrypted plugin store
+2. Configure backup destination in settings
+
+## Configuration
+
+| Setting | Description |
+|---------|-------------|
+| Backup type | Samba (SMB) or SFTP |
+| Host | Server hostname or IP |
+| Path | Remote path for backup |
+| Username/Password | Credentials |
+| Schedule | Cron expression for backup frequency |
+
+## Dependencies
+
+- `samba-client` — For SMB backups
+- `ssh2-sftp-client` — For SFTP backups
+- `node-cron` — For scheduling

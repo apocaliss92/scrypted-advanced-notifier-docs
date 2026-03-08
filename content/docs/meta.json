@@ -1,0 +1,15 @@
+{
+  "pages": [
+    "index",
+    "advanced-notifier",
+    "frigate-bridge",
+    "reolink-native",
+    "yamnet",
+    "monitor",
+    "remote-backup",
+    "syslog",
+    "active-streams-info",
+    "zentik",
+    "ntfy"
+  ]
+}

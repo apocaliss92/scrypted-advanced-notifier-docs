@@ -1,0 +1,31 @@
+---
+title: Configuration
+description: Frigate Bridge settings
+---
+
+# Configuration
+
+## Plugin Settings
+
+| Setting | Description |
+|--------|-------------|
+| Frigate API URL | Full API endpoint (e.g. `http://192.168.1.100:5000/api`) |
+| Base go2rtc RTSP URL | RTSP base for streams (e.g. `rtsp://192.168.1.100:8554`) |
+| MQTT Broker | Broker URL, username, password (or use existing MQTT plugin) |
+| MQTT Topic | Default Frigate topic (usually `frigate`) |
+
+## Extensions
+
+Each adopted camera gets these extensions:
+
+| Extension | Interface | Description |
+|-----------|-----------|-------------|
+| Frigate Motion Detection | MotionSensor | Motion events from Frigate |
+| Frigate Videoclips | VideoClips | Videoclips in NVR app |
+| Frigate Object Detector | ObjectDetection | Object detections with zone filtering |
+| Frigate Audio Detector | — | Audio levels and events |
+| Frigate Events Recorder | EventRecorder | Detection timeline in NVR app |
+
+## Zone Filtering
+
+Zones declared in Frigate are shown in settings. You can include or exclude zones from events dispatched to Scrypted.

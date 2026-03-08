@@ -1,0 +1,29 @@
+---
+title: Occupancy Rules
+description: Monitor zones for occupied/empty (camera only)
+---
+
+# Occupancy Rules
+
+Occupancy rules monitor a specific area to mark it as occupied or not.
+
+## Setup
+
+1. Set an **Object Detector** on the plugin page (Rules → Object Detector)
+2. Add a new text in **Occupancy rules** and save
+3. Set activation type and notifiers
+4. Set detection class to monitor
+5. Set camera zone (must be **Observe** type in Object detection section)
+
+## Options
+
+| Setting | Description |
+|---------|-------------|
+| Capture zone | (Optional) Reduce frame for detection; may increase success rate |
+| Zone type | **Intersect** — object in any portion of zone. **Contain** — object fully inside |
+| Score threshold | For static detections, keep low (default 0.3) |
+| Occupancy confirmation | Seconds to avoid false results |
+| Force update in seconds | Force check if no detection. Any detection checks all rules |
+| Max objects | Zone occupied if detected objects ≥ this number |
+| Zone occupied text / Zone not occupied text | Notification texts |
+| Confirm occupancy with AI | Reduce false positives. Customize prompt in plugin AI section |

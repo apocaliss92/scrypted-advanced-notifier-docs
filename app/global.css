@@ -1,0 +1,17 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+
+@theme {
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Scrypted Plugins Docs — teal accent */
+:root {
+  --color-fd-primary: hsl(173, 80%, 40%);
+  --color-fd-primary-foreground: hsl(0, 0%, 100%);
+}
+.dark {
+  --color-fd-primary: hsl(173, 70%, 45%);
+  --color-fd-primary-foreground: hsl(0, 0%, 100%);
+}

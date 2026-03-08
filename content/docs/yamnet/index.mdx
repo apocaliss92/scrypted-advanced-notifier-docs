@@ -1,0 +1,39 @@
+---
+title: YAMNet Audio Classification
+description: Audio classification for cry, bark, baby, scream detection
+---
+
+# YAMNet Audio Classification
+
+Scrypted plugin using [YAMNet](https://github.com/tensorflow/models/tree/master/research/audioset/yamnet) for audio classification. Detects sounds like crying, barking, baby, screaming, and more.
+
+## Features
+
+- **ObjectDetection** interface — Emits audio events as detections
+- **DeviceProvider** — Creates detection devices
+- **Python runtime** — Uses TensorFlow YAMNet model
+
+## Supported Classes
+
+YAMNet recognizes 521 AudioSet classes, including:
+
+- Baby crying, infant cry
+- Bark, dog
+- Scream, yell
+- Speech, conversation
+- And many more
+
+## Prerequisites
+
+- Python 3.9+ (3.10 on macOS ARM64, 3.9 on Windows x64)
+- TensorFlow / YAMNet dependencies
+
+## Installation
+
+1. Install **YAMNet Audio Classification** from the Scrypted plugin store
+2. The plugin uses the Scrypted Python runtime — ensure it's configured
+3. First run may download the YAMNet model
+
+## Integration
+
+Use with [Advanced Notifier](/docs/advanced-notifier/getting-started) to create rules based on audio detections (e.g. baby cry, dog bark).

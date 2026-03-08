@@ -1,0 +1,37 @@
+---
+title: Getting Started
+description: Install and configure Frigate Bridge
+---
+
+# Getting Started
+
+## Prerequisites
+
+- [Scrypted](https://scrypted.app) installed
+- [Frigate](https://frigate.video) NVR running
+- go2rtc (usually bundled with Frigate)
+
+## Installation
+
+1. Install the **Frigate Bridge** plugin from the Scrypted plugin store
+2. Open plugin settings
+
+## Configuration
+
+1. **Frigate API URL** — e.g. `http://192.168.1.100:5000/api`
+2. **Base go2rtc RTSP URL** — e.g. `rtsp://192.168.1.100:8554`
+3. **MQTT** — Configure all fields, or use an existing MQTT plugin; the bridge listens to the default Frigate topic
+
+## Camera Adoption
+
+On the plugin page you'll see a list of available cameras. Click any camera and confirm adoption. The device will be available immediately with all extensions enabled.
+
+In **Detected streams** you can choose which stream source to use (e.g. go2rtc restream of the user's input).
+
+## Advanced Notifier
+
+Frigate Bridge is fully compatible with [Advanced Notifier](/docs/advanced-notifier/getting-started). Any Frigate detection can be used to configure notification rules.
+
+## Export Configuration
+
+The plugin can export default configuration for each Scrypted camera to use rebroadcast URLs on Frigate.

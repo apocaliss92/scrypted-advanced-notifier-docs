@@ -1,0 +1,38 @@
+---
+title: Getting Started
+description: Install and configure Reolink Native
+---
+
+# Getting Started
+
+## Prerequisites
+
+- [Scrypted](https://scrypted.app) installed
+- Reolink camera(s) on the same network
+
+## Installation
+
+1. Install **Reolink Native** from the Scrypted plugin store
+2. The plugin will auto-discover cameras
+
+## Device Types
+
+The plugin automatically distinguishes:
+
+| Type | Notes |
+|------|-------|
+| **Regular cameras** | RTSP, RTMP, and native streams |
+| **Battery cameras** | Prebuffer/snapshots disabled to save battery; PIR events require a HomeHub when not attached |
+| **NVRs** | Full NVR support |
+
+## Streams
+
+All devices offer RTSP and RTMP streams when available, plus native streams built on the Reolink protocol.
+
+## Videoclips
+
+Videoclips are opt-in with auto-download to speed up loading. Reolink doesn't store snapshots; Scrypted generates them on first request or on a schedule (configurable in settings).
+
+## Battery Cameras Without Hub
+
+If battery cameras are not attached to a hub, motion during standby cannot be detected. PIR events use a subGHz signal that only the HomeHub can receive.

@@ -1,0 +1,33 @@
+---
+title: Rules Overview
+description: Detection, Occupancy, Audio, Timelapse, Recording rules
+---
+
+# Rules
+
+Rules can be: **Detection**, **Occupancy**, **Audio**, **Timelapse**, **Recording**. Some properties are hidden until **Show more configurations** is activated.
+
+## Common Properties
+
+| Property | Description |
+|----------|-------------|
+| **Activation type** | When the rule is active: Always, Schedule (time range), OnActive (devices selector) |
+| **Notifiers** | Notifiers to notify; Pushover priority, Home Assistant actions |
+| **Open sensors** | Sensors that must be open to enable the rule |
+| **Closed sensors** | Sensors that must be closed to enable the rule |
+| **Alarm modes** | Alarm states that enable the rule (Security system in Rules → General) |
+| **Notify with a clip** | (Detection, Occupancy) Generate short clip instead of snapshot. MP4 (HA) or GIF (HA, Pushover) |
+
+### OnActive Activation
+
+When activation type is **OnActive**, the rule is active only if the camera is in the **OnActive devices** selector (Plugin → Rules → General). The selector can be driven by MQTT via **Active entities topic** under General → MQTT. The message can contain device IDs, names, or Home Assistant entity IDs.
+
+## Rule Types
+
+<Cards>
+  <Card title="Detection" description="Object detections trigger notifications" href="/docs/advanced-notifier/rules-detection" />
+  <Card title="Recording" description="Record videoclips on detection" href="/docs/advanced-notifier/rules-recording" />
+  <Card title="Occupancy" description="Monitor zones for occupied/empty" href="/docs/advanced-notifier/rules-occupancy" />
+  <Card title="Timelapse" description="Generate timelapse videos" href="/docs/advanced-notifier/rules-timelapse" />
+  <Card title="Audio" description="Audio level and event detection" href="/docs/advanced-notifier/rules-audio" />
+</Cards>

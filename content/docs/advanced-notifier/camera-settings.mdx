@@ -1,0 +1,14 @@
+---
+title: Camera Settings
+description: Additional per-camera settings
+---
+
+# Additional Camera Settings
+
+| Setting | Description |
+|---------|-------------|
+| **Minimum snapshot acquisition delay** | Seconds before a new snapshot. ~5s for weak hardware |
+| **Off motion duration** | Seconds to consider motion ended. Overrides motion off events |
+| **Snapshot from Decoder** | Take snapshots from decoded stream. **Always** — when detection rules with clips, timelapse or occupancy run. **OnMotion** — only during motion (useful for snapshot timeout errors). **Auto** — default |
+| **Minimum notification delay** | Debounce notifications |
+| **Minimum MQTT publish delay** | Debounce MQTT image updates for basic detections |

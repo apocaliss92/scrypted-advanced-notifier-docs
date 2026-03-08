@@ -1,0 +1,27 @@
+---
+title: Webhooks
+description: Latest snapshot and POST detection images
+---
+
+# Webhooks
+
+## Latest Snapshot
+
+Provides the latest registered image per type. Base URL is in camera settings under Advanced Notifier → Webhooks. Replace `{IMAGE_NAME}` with:
+
+**Object detection:**
+
+- `object-detection__{ motion | any_object | animal | person | vehicle }`
+- `object-detection__{ motion | any_object | animal | person | vehicle }__{ NVR | Frigate }`
+- `object-detection__face-{ known person label }`
+- `object-detection__face-{ known person label }_{ NVR | Frigate }`
+
+**Rule images:**
+
+- `ruleImage__{ ruleName }`
+- `ruleClip__{ ruleName }`
+- `ruleGif__{ ruleName }`
+
+## POST Detection Images
+
+Provide multiple URLs. For each detection, POST a base64 image with metadata. Filter by classes and define minimum delay.

@@ -1,0 +1,38 @@
+---
+title: Sequences
+description: Custom sequences with PTZ, scripts, switches
+---
+
+# Sequences
+
+In the **Sequences** section (plugin page) you can define custom sequences with steps: Wait, Script, PTZ preset, Switch on/off, Lock, Entry open/close.
+
+## Attachment Points
+
+Sequences can be attached to rules at different moments:
+
+| Moment | When it runs |
+|--------|--------------|
+| **On-activation** | When the rule becomes active (rule with activation type other than Always) |
+| **On-deactivation** | When the rule becomes inactive |
+| **On-trigger** | When the rule is triggered (e.g. detection matched, occupancy change) |
+| **On-reset** | When the rule is reset (e.g. after trigger window ends) |
+| **On-generated** | When all artifacts are ready (video clip, gif, image). Detection, Occupancy, Timelapse |
+
+## On-generated Payload
+
+For **On-generated sequences**, scripts receive a payload via `variables.payload` in Scrypted scripts.
+
+**Detection and Occupancy:**
+
+- `rule` — rule object (name, notifiers, settings)
+- `videoUrl` — URL of generated video clip (if MP4)
+- `gifUrl` — URL of generated GIF (if GIF)
+- `imageUrl` — URL of stored snapshot
+
+**Timelapse:**
+
+- `rule` — timelapse rule object
+- `videoUrl` — URL of timelapse video
+- `imageUrl` — URL of thumbnail
+- `videoPath`, `imagePath` — filesystem paths (when available)
