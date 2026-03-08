@@ -2,11 +2,21 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'fumadocs-core/link';
+import Image from 'next/image';
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import { cn } from '@/lib/cn';
+
+const PLUGIN_ICONS: Record<string, string> = {
+  'advanced-notifier': '/assets/icon.png',
+  'frigate-bridge': '/assets/frigate.png',
+  'reolink-native': '/assets/reolink.svg',
+  zentik: '/assets/zentik.png',
+  ntfy: '/assets/ntfy.svg',
+  yamnet: '/assets/yamnet.svg',
+};
 
 export function PluginCards({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
@@ -25,6 +35,7 @@ type PluginCardProps = {
 
 export function PluginCard({ slug, title, description, href }: PluginCardProps) {
   const [info, setInfo] = useState<{ version: string | null; changelog: string | null } | null>(null);
+  const iconSrc = PLUGIN_ICONS[slug];
 
   useEffect(() => {
     fetch(`/api/plugin-info/${slug}`)
@@ -44,7 +55,12 @@ export function PluginCard({ slug, title, description, href }: PluginCardProps) 
     >
       <Link href={href} className="block -m-4 p-4 rounded-t-xl hover:no-underline shrink-0">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="not-prose mb-1 text-sm font-medium flex-1 min-w-0 truncate">{title}</h3>
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            {iconSrc && (
+              <Image src={iconSrc} alt="" width={24} height={24} className="rounded shrink-0" />
+            )}
+            <h3 className="not-prose mb-1 text-sm font-medium flex-1 min-w-0 truncate">{title}</h3>
+          </div>
           {info?.version && (
             <span className="shrink-0 text-xs font-mono px-2 py-0.5 rounded-md bg-fd-muted text-fd-muted-foreground">
               v{info.version}
