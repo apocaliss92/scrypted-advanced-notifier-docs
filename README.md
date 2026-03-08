@@ -25,19 +25,22 @@ npm run build
 npm run start
 ```
 
+## Docker
+
+Single image (Node build + nginx), same pattern as [zentik-notifier/docs](https://github.com/apocaliss92/zentik-notifier/tree/main/docs):
+
+```bash
+docker build -t scrypted-docs .
+docker run -p 8080:8080 scrypted-docs
+```
+
+Open [http://localhost:8080](http://localhost:8080).
+
 ## Deployment (Railway)
 
-The site deploys to Railway via GitHub Actions on push to `main` or on version tags (`v*.*.*`).
+Deploys via GitHub Actions on push to `main` or tags `v*.*.*`. Railway builds the Docker image.
 
-**Setup:**
-
-1. Create a [Railway](https://railway.app) project and add a new service (empty or from this repo)
-2. In the service settings, note the **Service ID** (or get it via `railway status`)
-3. Add GitHub secrets:
-   - `RAILWAY_TOKEN` — from [Railway Account Settings → Tokens](https://railway.app/account/tokens)
-   - `RAILWAY_SERVICE_ID` — the service ID from step 2
-
-Railway auto-detects Next.js and runs `npm run build` and `npm start`.
+**Setup:** Add secrets `RAILWAY_TOKEN` and `RAILWAY_SERVICE_ID` (from [Railway tokens](https://railway.app/account/tokens) and service settings).
 
 ## Documented Plugins
 
