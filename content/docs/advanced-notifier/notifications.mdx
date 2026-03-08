@@ -30,16 +30,15 @@ When you extend a notifier with Advanced Notifier, each notifier device gets its
 |---------|-------------|
 | **Enabled** | Enable or disable this notifier |
 | **Translations** | Use the plugin **Texts** section to customize notification messages |
-| **AI descriptions** | Use configured AI to generate notification text from the image |
-| **Notification key to edit** | Which payload key the plugin edits (body, title, etc.). Adjust if the wrong text appears in notifications |
-| **Enable on all notifications** | Handle all notifications on this notifier via the plugin. Useful for testing |
+| **AI descriptions** | Use configured AI to generate notification text from the image. For NVR: enable on both the notifier and each camera |
+| **Notification key to edit** | Which payload key the plugin edits (body, title, subtitle, etc.). Use especially with **Scrypted NVR notifier** devices when texts are not displayed correctly — iOS devices may map title/subtitle/body differently across notifiers |
+| **Enable on all notifications** | Testing setting |
 | **Scheduler** | Restrict notifications to a time range |
 | **Start time / End time** | Time window when notifications are sent (when Scheduler is enabled) |
-| **Cloud URL** (Webhooks) | Read-only URL for POST webhooks after each notification |
 
 ## Notification Text Generation
 
-Notification text is built from the **Texts** section of the plugin. You can define templates with placeholders like `${room}`, `${time}`, `${classnameText}`, `${nvrLink}`.
+Notification text is built from the **Texts** section of the plugin. These texts are used both for **rules** (detection, occupancy, timelapse, etc.) and as **translations for NVR notifier** messages. You can define templates with placeholders like `${room}`, `${time}`, `${classnameText}`, `${nvrLink}`.
 
 ### Plugin Texts (global)
 
@@ -68,7 +67,52 @@ Per-camera notification options are under **Advanced Notifier** → **Notifier**
 | Setting | Description |
 |---------|-------------|
 | **Notifications enabled** | Enable or disable notifications for this camera |
-| **AI descriptions** | Use AI to generate notification text (requires AI configured in plugin) |
+| **AI descriptions** | Use AI to generate notification text (requires AI configured in plugin). For NVR: enable on both the notifier and each camera |
 | **Scheduler** | Restrict notifications to a time range for this camera |
 | **Start time / End time** | Time window when notifications are sent |
-| **Default actions** | Actions shown on every notification, e.g. `{"action":"open_door","title":"Open door","icon":"sfsymbols:door"}` |
+| **Default actions** | Actions shown on every notification. See [Actions](#actions) below. |
+
+## Actions
+
+Actions are buttons shown on push notifications (e.g. open door, snooze, view in app). They can be set per camera (**Default actions**) or per rule. **Support and behavior depend on the selected notifier**:
+
+| Notifier | Rule-level actions | Camera default actions | Notes |
+|----------|--------------------|-------------------------|-------|
+| **Zentik** | Yes (Detection rules) | Yes | Full support. Use `sfsymbols:*` for icons on iOS |
+| **Home Assistant** | Yes (Detection rules) | Yes | Leave `url` empty to use HA webhook — `action` becomes the script/automation ID |
+| **NVR** (Scrypted) | No | Yes | Only camera default actions; rule-level actions not available |
+| **Ntfy** | No | Yes | Limited; actions may not render on all clients |
+| **Pushover** | No | No (default off) | Actions not added by default |
+| **Telegram** | No | Yes | Depends on Telegram bot capabilities |
+
+### Expected structure
+
+Each action is a JSON object with the following fields:
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `action` | Yes | Unique identifier. For Home Assistant with empty `url`, this is the script/automation ID |
+| `title` | Yes | Label shown on the button |
+| `url` | Yes | URL opened when tapped. Use `""` for Home Assistant — the plugin builds the webhook from `action` |
+| `icon` | No | `sfsymbols:door` (iOS) or `mdi:webcam` (Material Design) |
+
+### Examples
+
+**Generic (URL-based):**
+```json
+{"action":"open_door","title":"Open door","icon":"sfsymbols:door","url":"https://home.example.com/script/open_door"}
+```
+
+**Home Assistant (empty url — plugin builds webhook from `action`):**
+```json
+{"action":"open_door","title":"Open door","icon":"mdi:door","url":""}
+```
+
+## AI Descriptions
+
+AI descriptions use an LLM to generate notification text from the snapshot image. You must first configure an AI provider in [AI Setup](/docs/advanced-notifier/ai-setup).
+
+AI can be used in two ways:
+
+- **Rules** — Enable **AI descriptions** in the rule configuration (Rules → Detection / Occupancy / etc. → per-rule settings). No other setup required.
+- **NVR notifications** — Enable **AI descriptions** on both the **notifier** and each **camera** (cameras must also have AI descriptions enabled). See the images above: [General Notifier Settings](#general-notifier-settings) and [Camera-Specific Notification Settings](#camera-specific-notification-settings).

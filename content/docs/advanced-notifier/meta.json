@@ -6,7 +6,6 @@
     "getting-started",
     "mqtt",
     "homeassistant",
-    "people-tracker",
     "notifications",
     "nvr-notifications-passthrough",
     "notifications-customization",
@@ -23,6 +22,7 @@
     "storage-events",
     "webhooks",
     "alarm-system",
+    "people-tracker",
     "test-section"
   ]
 }

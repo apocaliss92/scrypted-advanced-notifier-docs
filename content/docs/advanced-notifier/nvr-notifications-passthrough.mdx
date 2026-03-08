@@ -5,6 +5,17 @@ description: Extend Scrypted NVR built-in notifiers with Advanced Notifier
 
 # NVR Notifications Passthrough
 
-:::info TODO
-This page documents how to use Advanced Notifier to extend and script the Scrypted NVR built-in notifiers. Basic info is in [Notifications](/docs/advanced-notifier/notifications) under "Scrypted NVR Notifiers".
-:::
+Advanced Notifier can extend the built-in notifiers of Scrypted NVR app. This lets you enhance NVR notifications without replacing them: translations, AI descriptions, scheduling, and MQTT discovery.
+
+## Setup
+
+1. Extend the NVR notifier device with the **Advanced Notifier** extension
+2. No other changes required — the plugin intercepts notifications and applies your settings
+
+## What You Get
+
+- **MQTT discovery** — Notifier and cameras appear in Home Assistant via MQTT
+- **Translations** — Use the plugin [Texts](/docs/advanced-notifier/notifications#notification-text-generation) to customize notification messages (enabled by default)
+- **AI descriptions** — Enable [AI descriptions](/docs/advanced-notifier/notifications#ai-descriptions) on both the notifier and each camera
+- **Scheduler** — Restrict notifications to a time range per camera or per notifier
+- **Disable per camera** — Turn off notifications for specific cameras via **Advanced Notifier → Notifier** on each camera
