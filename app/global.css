@@ -6,12 +6,16 @@
   --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Scrypted Plugins Docs — teal accent */
+/* Scrypted Plugins Docs — Scrypted accent rgb(97, 60, 177) */
 :root {
-  --color-fd-primary: hsl(173, 80%, 40%);
+  --color-fd-primary: hsl(259, 49%, 47%);
   --color-fd-primary-foreground: hsl(0, 0%, 100%);
+  --color-fd-accent: hsl(259, 40%, 94%);
+  --color-fd-accent-foreground: hsl(259, 49%, 30%);
 }
 .dark {
-  --color-fd-primary: hsl(173, 70%, 45%);
+  --color-fd-primary: hsl(259, 50%, 55%);
   --color-fd-primary-foreground: hsl(0, 0%, 100%);
+  --color-fd-accent: hsl(259, 30%, 22%);
+  --color-fd-accent-foreground: hsl(259, 50%, 90%);
 }

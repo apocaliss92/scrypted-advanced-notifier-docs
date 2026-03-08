@@ -17,5 +17,7 @@ Audio rules monitor the audio received by the camera. **They activate only if an
 
 | Setting | Description |
 |---------|-------------|
-| Decibel threshold | Audio level to alert |
-| Duration in seconds | Minimum duration to trigger (leave blank to notify immediately) |
+| Decibel threshold | Audio level to trigger the notification |
+| Samples window | Seconds to analyze (basic object detector emits every ~2 seconds) |
+| Hits percentage | Share of samples that must exceed threshold to trigger |
+| Minimum notification delay | Minimum seconds between notifications |

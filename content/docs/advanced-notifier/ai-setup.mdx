@@ -1,10 +1,23 @@
 ---
 title: AI Setup
-description: Configure AI providers for descriptions and filters (Google AI, OpenAI, Claude, Groq)
+description: Configure AI for descriptions and filters (LLM plugin)
 ---
 
 # AI Setup
 
-:::info TODO
-This page documents AI configuration on the plugin page: providers (Google AI, OpenAI, Claude, Groq), AI-generated descriptions, CLIP semantic search, and AI filter for confirmations.
-:::
+Advanced Notifier uses an LLM (Large Language Model) for AI-generated notification descriptions, detection filters, and occupancy confirmation. To enable these features, you must install and configure the Scrypted LLM plugin.
+
+## Prerequisites
+
+1. **Install the Large Language Model Plugin** — In Scrypted, go to **Plugins** → search for **LLM** or **Large Language Model** → Install **@scrypted/llm**
+2. **Configure an LLM device** — Add and configure at least one LLM device in the LLM plugin (e.g. Google AI, OpenAI, Claude, Groq). Follow the LLM plugin documentation for your chosen provider.
+
+## Plugin Configuration
+
+In Advanced Notifier, open the **AI** section and set **AI Source** to your configured LLM device. Once selected, you can use:
+
+| Feature | Description |
+|---------|-------------|
+| **AI descriptions** | Modifies notification text via the LLM. Replaces or enriches the message shown in push notifications. See [Notifications](/docs/advanced-notifier/notifications#ai-descriptions) (rules and NVR). |
+| **AI filter** | Adds an extra filter for detection rules before sending notifications. The LLM answers a yes/no question about the image — only detections that pass are notified. |
+| **Confirm occupancy with AI** | Uses the AI to confirm the occupancy state of a zone. Helps avoid false positives in occupancy rules. |

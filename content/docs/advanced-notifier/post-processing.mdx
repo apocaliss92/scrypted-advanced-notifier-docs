@@ -1,10 +1,29 @@
 ---
 title: Post Processing
-description: Image post processing (Crop, FullFrame, MarkBoundaries)
+description: Image post processing for rules (Crop, FullFrame, MarkBoundaries)
 ---
 
 # Post Processing
 
-:::info TODO
-This page documents **Image post processing** options for rules: Default, Crop, FullFrame, MarkBoundaries. Default depends on detection source (Crop for NVR, FullFrame for RawDetections).
-:::
+Rules can apply image post processing before sending notifications. Configure it per rule in **Rules** → Detection / Occupancy / etc. → **Image processing**.
+
+## Options
+
+| Option | Description |
+|--------|-------------|
+| **Default** | Depends on detection source: **Crop** for NVR (Frigate, Scrypted NVR), **FullFrame** for raw detections |
+| **Crop** | Crops the image to the detection bounding box. Focuses the notification on the detected object |
+| **FullFrame** | Uses the full frame image without cropping |
+| **MarkBoundaries** | Draws bounding boxes around detections on the full frame. Useful for debugging or showing multiple objects |
+
+## When to Use
+
+- **Crop** — Smaller notification images, clearer focus on the detected object. Best when a single object is relevant
+- **FullFrame** — Full scene context. Use when the whole frame matters (e.g. occupancy, multiple objects)
+- **MarkBoundaries** — Visualize detection boxes. Useful for verifying detection accuracy or showing zones
+
+## Plugin Settings
+
+In **Post-Processing** → **Marking boundaries**, you can set:
+
+- **Texts font size** — Font size for labels drawn on detection boxes

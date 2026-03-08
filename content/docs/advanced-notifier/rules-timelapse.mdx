@@ -17,9 +17,14 @@ Define a timeframe; the plugin collects frames and generates a clip at the end. 
 
 | Setting | Description |
 |---------|-------------|
-| Notification text | Message for the notification |
-| Frames acquisition delay | Interval between frames. Non-motion detections always add a frame |
-| Timelapse framerate | Depends on timespan and desired clip length |
-| Generate now | Reuse frames from previous session (stored until next session) |
+| Notification message | Message for the notification |
+| Force snapshot seconds | Force a frame acquisition on a regular basis |
+| Day | Week days to run (empty = all days) |
+| Start time / End time | Time window for frame collection |
+| Frames acquisition delay | Minimum seconds between frames (Show more) |
+| Timelapse framerate | Output video framerate (Show more) |
+| Generate now | Generate clip from stored frames (Show more) |
+| Cleanup data | Delete stored frames (Show more) |
+| On-generated sequences | Sequences to run when clip is ready (Show more) |
 
 If Home Assistant notifier is used and the clip is &lt;50MB, it will show as push notification preview.

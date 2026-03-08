@@ -7,20 +7,47 @@ description: Detection, Occupancy, Audio, Timelapse, Recording rules
 
 Rules can be: **Detection**, **Occupancy**, **Audio**, **Timelapse**, **Recording**. Some properties are hidden until **Show more configurations** is activated.
 
+## Where Rules Are Created
+
+Rules can be created in two places:
+
+- **Plugin page** — Rules apply to multiple cameras. Use the **Devices** selector to choose which cameras; if left empty, the rule applies to **all** eligible devices.
+- **Per device** — Rules apply only to that camera (e.g. from the camera settings page).
+
 ## Common Properties
 
-| Property | Description |
-|----------|-------------|
-| **Activation type** | When the rule is active: Always, Schedule (time range), OnActive (devices selector) |
-| **Notifiers** | Notifiers to notify; Pushover priority, Home Assistant actions |
-| **Open sensors** | Sensors that must be open to enable the rule |
-| **Closed sensors** | Sensors that must be closed to enable the rule |
-| **Alarm modes** | Alarm states that enable the rule (Security system in Rules → General) |
-| **Notify with a clip** | (Detection, Occupancy) Generate short clip instead of snapshot. MP4 (HA) or GIF (HA, Pushover) |
+Properties shared across rule types. Some are hidden until **Show more configurations** is enabled.
+
+| Property | Applies to | Description |
+|----------|------------|-------------|
+| **Enabled** | All | Turn the rule on or off |
+| **Activation type** | Detection, Occupancy, Audio, Recording (not Timelapse) | **Always** — always active. **Schedule** — active in time range. **OnActive** — active when camera is in OnActive devices. **AdvancedSecuritySystem** — tied to alarm modes (Detection only) |
+| **Notifiers** | Detection, Occupancy, Audio, Timelapse (not Recording) | Notifiers to send notifications to; per-notifier options (priority, actions, snooze) in Show more |
+| **Custom text / Notification text** | Detection, Occupancy, Audio, Timelapse | Override notification message; placeholders vary by rule type |
+| **Notify with a clip** | Detection, Occupancy | Generate short clip instead of snapshot. MP4 (HA/Zentik) or GIF |
+| **Open sensors** | All (Show more) | Sensors that must be **open** to enable the rule |
+| **Closed sensors** | All (Show more) | Sensors that must be **closed** to enable the rule |
+| **Alarm modes** | All (Show more, or when AdvancedSecuritySystem) | Security system modes that enable the rule (Rules → General) |
+| **Snooze per rule** | Detection, Occupancy, Audio, Timelapse | Snooze applies to all notifiers of the rule, not per device |
+| **Additional storage path** | Detection, Occupancy, Timelapse (Show more) | Save artifacts (image, GIF, MP4) to a folder |
+| **Sequences** | All (Show more) | On-activation, On-deactivation, On-trigger, On-reset, On-generated |
 
 ### OnActive Activation
 
 When activation type is **OnActive**, the rule is active only if the camera is in the **OnActive devices** selector (Plugin → Rules → General). The selector can be driven by MQTT via **Active entities topic** under General → MQTT. The message can contain device IDs, names, or Home Assistant entity IDs.
+
+### Schedule Activation
+
+When activation type is **Schedule**, set **Day** (week days, empty = all), **Start time**, and **End time** to define the active window.
+
+### Detection and Occupancy Only
+
+| Property | Description |
+|----------|-------------|
+| **Detections source** | Where detections come from (NVR, RawDetection, Frigate, etc.) |
+| **Image post processing** | Default, Crop, FullFrame, MarkBoundaries |
+| **Show active zones** | Highlight zones in notifications |
+| **Enable AI descriptions** | (Detection) AI generates description from image |
 
 ## Rule Types
 

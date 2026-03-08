@@ -1,10 +1,31 @@
 ---
 title: Audio Analysis
-description: Onboard audio analyser and integration with YAMNet
+description: Onboard audio analyser for levels and classification
 ---
 
 # Audio Analysis
 
-:::info TODO
-This page documents the onboard audio analyser (activated when audio rules run), and integration with [YAMNet](/docs/yamnet) for audio event classification (cry, bark, etc.).
-:::
+The plugin can run an onboard audio analyser on each camera with two modes:
+
+| Mode | Description |
+|------|--------------|
+| **Audio levels** | Tracks volume levels from the stream. Used for audio rules and MQTT audio segments. |
+| **Audio classification** | Classifies sounds (cry, bark, baby, scream, etc.) to trigger detection-based rules. Requires the [YAMNet](/docs/yamnet) plugin. |
+
+## Classification with YAMNet
+
+For audio classification, install and configure the [YAMNet Audio Classification](/docs/yamnet) plugin. Advanced Notifier uses it as the default classifier source — select it in **Advanced Notifier → Audio Analysis** on each camera under **Audio classifier source**.
+
+## Per-Camera Settings
+
+Configure the analyser under **Advanced Notifier → Audio Analysis** on each extended camera.
+
+![Camera audio settings](/assets/Camera%20audio%20settings.png)
+
+| Setting | Description |
+|---------|-------------|
+| **Audio analyzer enabled** | Enable or disable the onboard audio analyser |
+| **Audio classifier source** | Select YAMNet for classification, or Disabled for levels-only mode |
+| **Stream** | Select a stream that provides audio |
+| **Manual stream** | Custom RTSP URL for cameras with unusual setups. Copy from the "RTSP rebroadcast URL" field if needed |
+| **Audio sensitivity** | How often to run classification based on audio levels (Low, Medium, High) |

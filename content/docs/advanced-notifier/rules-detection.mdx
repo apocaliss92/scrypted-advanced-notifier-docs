@@ -12,25 +12,24 @@ Detection rules specify which object detections trigger a notification. Can be c
 1. Add a new text in **Detection rules** selector and save
 2. Set activation type
 3. Set notifiers
-4. Configure detection classes and minimum score
+4. Configure detection classes (and score threshold in Show more if needed)
 
 ## Options
 
 | Setting | Description |
 |---------|-------------|
-| Use NVR detections | Trigger only from NVR plugin detections. Cropped images, sync with NVR app events |
 | Detection classes | Which objects trigger (motion, animal, person, vehicle, etc.) |
-| Minimum score | Score threshold to trigger |
-| Minimum notification delay | Debounce notifications (overrides camera) |
-| Minimum MQTT publish delay | Debounce MQTT image updates |
 | Whitelisted zones | Use only detections in these zones |
 | Blacklisted zones | Ignore detections from these zones |
-| Disable recording in seconds | Enable NVR recording for X seconds then disable |
 | Custom text | Override default texts (placeholders available in Texts tab) |
 | Enable AI descriptions | AI generates description from image |
 | CLIP Description | Semantic search to filter detections |
 | AI filter | Send image to AI to confirm input prompt |
 | Image post processing | MarkBoundaries (draw box), Crop (crop around object) |
+| Score threshold | Minimum score to trigger (Show more) |
+| Minimum notification delay | Debounce notifications (Show more) |
+| Minimum MQTT publish delay | Debounce MQTT image updates (Show more) |
+| Disable recording in seconds | Enable NVR recording for X seconds then disable (Show more) |
 
 ## Audio Classification
 
