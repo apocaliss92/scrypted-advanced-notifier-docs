@@ -1,6 +1,5 @@
 {
   "pages": [
-    "index",
     "advanced-notifier",
     "frigate-bridge",
     "reolink-native",
