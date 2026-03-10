@@ -1,11 +1,59 @@
 ---
 title: Home Assistant
-description: Home Assistant connection, automations, and integration
+description: Home Assistant connection, WebSocket transport, automations, and custom integration
 ---
 
 # Home Assistant
 
 The Home Assistant connection is required to use **Home Assistant notifiers** for push notifications. The plugin also generates automations needed for **notification snoozing** (snooze actions on push notifications) and for the **onboard [alarm system](/docs/advanced-notifier/alarm-system)** (arming, disarming, triggering).
+
+## HA Custom Integration (HACS)
+
+If you use **WebSocket transport** (recommended), install the custom integration via HACS:
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=apocaliss92&repository=scrypted-advanced-notifier-homeassistant&category=integration)
+
+Or manually:
+
+1. In HACS, add `https://github.com/apocaliss92/scrypted-advanced-notifier-homeassistant` as a custom repository (category: Integration)
+2. Install **Scrypted Advanced Notifier**
+3. Restart Home Assistant
+
+### Configure the Integration
+
+After installing via HACS:
+
+1. Go to **Settings → Integrations → Add Integration** and search for *Scrypted Advanced Notifier*
+2. The config flow asks for two parameters:
+
+![Config flow — Scrypted URL and HA Secret](/assets/Homeassistant/HA%20-%20add%20integration%201.png)
+
+| Parameter | Where to find it |
+|-----------|-----------------|
+| **Scrypted URL** | The base URL of your Scrypted instance, e.g. `https://192.168.1.4:10443`. This must be reachable from Home Assistant. |
+| **HA Secret** | In the Advanced Notifier plugin: **General → Homeassistant → HA WebSocket Secret**. This is an auto-generated secret — copy it exactly. |
+
+3. After submitting, the integration discovers all devices and entities from the plugin:
+
+![Discovered devices after setup](/assets/Homeassistant/HA%20-%20add%20integration%202.png)
+
+4. You can manage which cameras are imported via **Manage devices**:
+
+![Manage devices — select cameras](/assets/Homeassistant/HA%20-%20add%20integration%203.png)
+
+### WebSocket Transport Setup
+
+1. Go to **General → Homeassistant** and set **Discovery layer** to **websocket**
+2. Copy the **HA WebSocket Secret** into the HA custom integration config flow (see above)
+3. Set **HA Allowed Origins** to your Home Assistant local address (e.g. `http://homeassistant.local:8123`). This is a comma-separated list of HA base URLs allowed to connect to the plugin's WebSocket server.
+
+![WebSocket transport settings](/assets/Homeassistant/HA%20-%20transport.png)
+
+:::info No MQTT broker needed
+With WebSocket transport, you do **not** need an MQTT broker. The custom integration receives state updates via HA WebSocket events and sends commands back via REST.
+:::
+
+For the list of discovered entities and shared settings, see [Discovery](/docs/advanced-notifier/discovery).
 
 ## Connection Steps
 
@@ -50,6 +98,7 @@ These automations are created at plugin startup when **Homeassistent enabled** i
 
 ## Related
 
-- [MQTT](/docs/advanced-notifier/mqtt) — MQTT autodiscovery exposes entities to Home Assistant via MQTT
+- [Discovery](/docs/advanced-notifier/discovery) — Entity discovery, settings, and full entity reference
+- [MQTT](/docs/advanced-notifier/mqtt) — MQTT broker setup
 - [Notifications](/docs/advanced-notifier/notifications) — Configure Home Assistant as a notifier
 - [Advanced alarm system](/docs/advanced-notifier/alarm-system) — Alarm panel integration

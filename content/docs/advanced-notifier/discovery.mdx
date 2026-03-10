@@ -1,0 +1,180 @@
+---
+title: Discovery
+description: Entity discovery, transport options, and shared settings for Home Assistant integration
+---
+
+# Discovery
+
+Advanced Notifier exposes entities to Home Assistant using one of two transport methods: **MQTT** or **WebSocket**. Both transports share the same entities, settings, and autodiscovery behavior — choose the one that best fits your setup.
+
+## Transport Options
+
+| Transport | How it works | Requirements |
+|-----------|-------------|--------------|
+| **MQTT** | Plugin publishes to an MQTT broker; HA discovers entities via MQTT autodiscovery | MQTT broker (Mosquitto, etc.). See [MQTT setup](/docs/advanced-notifier/mqtt) |
+| **WebSocket** | Plugin fires HA events over WebSocket; HA custom integration manages entities directly | [HA Custom Integration](/docs/advanced-notifier/homeassistant#ha-custom-integration-hacs). No broker needed |
+
+Select the transport in **General → Homeassistant → Discovery layer**.
+
+![Discovery layer and Homeassistant settings](/assets/Homeassistant/HA%20-%20transport.png)
+
+### Homeassistant Settings
+
+| Setting | Description |
+|---------|-------------|
+| **Use HA plugin credentials** | Reuse URL and token from the Scrypted Home Assistant plugin |
+| **Scrypted token** | Token found on the HA entity created by the Scrypted integration (e.g. `sensor.scrypted_token_{ip}`). Used to open camera streams through the HA proxy app |
+| **Discovery layer** | Transport used to push state updates to Home Assistant. **mqtt** uses the existing MQTT broker; **websocket** connects directly via the HA custom integration |
+| **HA WebSocket Secret** | Auto-generated secret. Copy this value into the HA custom integration config flow (WebSocket only) |
+| **HA Allowed Origins** | Comma-separated list of HA local addresses allowed to connect to the plugin's WebSocket server (e.g. `http://homeassistant.local:8123`). WebSocket only |
+
+## Plugin Discovery Settings
+
+These settings apply globally to both transport modes and control what gets reported to Home Assistant. Per-camera overrides are available in **Camera device → Homeassistant** subgroup.
+
+| Setting | Description |
+|---------|-------------|
+| **Active entities topic** | Topic containing a list of device names/ids, used for the "OnActive" rules |
+| **Reset all topics** | Clears retained topics for ALL devices including discovery topics, then republishes. Use if entities are missing/duplicated or out of sync |
+| **Motion image update frequency (seconds)** | Minimum seconds between image updates for motion when using non-NVR sources (decoder/raw). Default: 5. When using NVR, this is overridden by the camera's minimum publish delay |
+| **Object image update frequency (seconds)** | Minimum seconds between image updates for object detections when using non-NVR sources (decoder/raw). Default: 5. When using NVR, this is overridden by the camera's minimum publish delay |
+| **Detections source** | Which source feeds detections. **NVR** / **Frigate** = NVR/Frigate detections (clipped images). **RawDetection** = Scrypted decoder. **All** = both |
+| **Faces source** | Which source feeds the people tracker entities. Same options as Detections source |
+| **Zones source** | Which zone list is used for zone entities (e.g. `zone_person_detected`). **Scrypted** = Observe zones. **Frigate** = zones from Frigate config. **All** = both |
+
+![Plugin discovery settings](/assets/MQTT/MQTT%20-%20settings.png)
+
+## Per-Camera Settings
+
+Each camera can override the plugin settings in **Camera device → Homeassistant** subgroup. All options default to **Default**, which means the camera follows the plugin settings. Override only when you need different behavior for a specific camera.
+
+| Setting | Description |
+|---------|-------------|
+| **Report to Home Assistant** | Enable or disable autodiscovery for this camera. Default: enabled. When disabled, the camera is excluded from Home Assistant |
+| **Detections source** | Override which source feeds detections for this camera. Default = plugin setting |
+| **Faces source** | Override which source feeds the people tracker for this camera. Default = plugin setting |
+| **Zones source** | Override which zone list is used for this camera's zone entities. Default = plugin setting |
+| **Rediscover device on Home Assistant** | Button to reset and republish this camera's discovery |
+
+![Per-camera settings](/assets/MQTT/MQTT%20-%20camera%20settings.png)
+
+Cameras enabled to the plugin are automatically reported to Home Assistant. Use **Report to Home Assistant** in Camera device → Homeassistant to disable per camera.
+
+## Autodiscovery — Entities per Device Type
+
+Discovery uses Home Assistant device-based discovery. Topic prefix: `scrypted-an`. Topic format: `scrypted-an/scrypted-an-{deviceId}/{entity}` (state), `.../set` (command).
+
+### When Autodiscovery Runs
+
+- **At plugin startup** — all enabled devices are discovered
+- **When a device is added or enabled** — the new device is discovered
+- **Periodically every 60 minutes** — each device (cameras, notifiers, sensors, plugin, alarm system) republishes its discovery to keep Home Assistant in sync
+
+### Camera
+
+| Entity | Domain | Values / Payload | Condition |
+|--------|--------|------------------|-----------|
+| `triggered` | binary_sensor | `true` / `false` | Always |
+| `notifications_enabled` | switch | `true` / `false` | Always |
+| `rebroadcast_enabled` | switch | `true` / `false` | Always |
+| `snapshots_enabled` | switch | `true` / `false` | Always |
+| `privacy_enabled` | switch | `true` / `false` | Always |
+| `{class}_detected` | binary_sensor | `true` / `false` | Per detection class (motion, person, animal, vehicle, audio, face, plate, any_object, etc.) |
+| `{class}_last_image` | image | base64 | Per detection class |
+| `{class}_last_detection` | sensor | ISO timestamp | Per detection class (disabled by default) |
+| `{class}_last_recognized` | sensor | label | Face/plate only |
+| `{class}_objects` | sensor | count | animal, person, vehicle only |
+| `battery` | sensor | 0–100 % | If Battery interface |
+| `online` | binary_sensor | `true` / `false` | If Online interface |
+| `sleeping` | binary_sensor | `true` / `false` | If Sleep interface |
+| `recording_enabled` | switch | `true` / `false` | If VideoRecorder |
+| `reboot` | button | `PRESS` | If Reboot interface |
+| `sound_pressure` | sensor | dB | If AudioVolumeControl |
+| `ptz-preset` | select | preset name | If PTZ + presets |
+| `ptz-zoom-in`, `ptz-zoom-out` | button | `PRESS` | If PTZ zoom |
+| `ptz-move-up`, `ptz-move-down` | button | `PRESS` | If PTZ tilt |
+| `ptz-move-left`, `ptz-move-right` | button | `PRESS` | If PTZ pan |
+| `accessory_siren_on_motion` | switch | `true` / `false` | Reolink/Hikvision |
+| `accessory_siren` | switch | `true` / `false` | Reolink/Hikvision |
+| `accessory_light_on_motion` | switch | `true` / `false` | Reolink/Hikvision |
+| `accessory_light` | switch | `true` / `false` | Reolink/Hikvision |
+| `accessory_pir` | switch | `true` / `false` | Reolink |
+| `accessory_autotracking` | switch | `true` / `false` | Reolink |
+| `{zone}_{class}_detected` | binary_sensor | `true` / `false` | Per zone x animal/person/vehicle |
+| `{zone}_{class}_last_image` | image | base64 | Per zone |
+| `{zone}_{class}_last_detection` | sensor | timestamp | Per zone |
+| `{zone}_{class}_objects` | sensor | count | Per zone |
+| `camera_{stream_name}` * | camera | RTSP stream + snapshot | Per stream destination (e.g. Main, Sub) |
+
+\* **WebSocket transport only** — stream camera entities are exposed only when using the WebSocket discovery layer. Each stream provides an RTSP URL and a snapshot URL.
+
+### Camera — Rule entities (per rule)
+
+| Entity | Domain | Values |
+|--------|--------|--------|
+| `{rule_slug}_active` | switch | `true` / `false` |
+| `{rule_slug}_running` | binary_sensor | `true` / `false` |
+| `{rule_slug}_triggered` | binary_sensor | `true` / `false` |
+| `{rule_slug}_occupied` | binary_sensor | `true` / `false` (occupancy rules) |
+| `{rule_slug}_last_image` | image | base64 |
+| `{rule_slug}_last_detection` | sensor | ISO timestamp |
+
+### Notifier
+
+| Entity | Domain | Values |
+|--------|--------|--------|
+| `notifications_enabled` | switch | `true` / `false` |
+
+### Plugin (scrypted-an-plugin)
+
+| Entity | Domain | Values |
+|--------|--------|--------|
+| `notifications_enabled` | switch | `true` / `false` |
+| `rpc_objects` | sensor | count |
+| `rss_memory` | sensor | MB |
+| `heap_memory` | sensor | MB |
+| `pending_results` | sensor | count |
+| `{rule_slug}_active` | switch | `true` / `false` |
+| `{rule_slug}_running` | binary_sensor | `true` / `false` |
+
+### People Tracker (scrypted-an-people-tracker)
+
+See [People Tracker](/docs/advanced-notifier/people-tracker) for full documentation. Per person (known face labels):
+
+| Entity | Domain | Values |
+|--------|--------|--------|
+| `{person_slug}` | sensor | room/location |
+| `{person_slug}_last_image` | image | base64 |
+| `{person_slug}_last_detection` | sensor | ISO timestamp |
+
+### Alarm System (scrypted-an-alarm-system)
+
+| Entity | Domain | Values / Commands |
+|--------|--------|-------------------|
+| `alarm-system` | alarm_control_panel | State: `disarmed`, `armed_away`, `armed_home`, `armed_night`, `triggered`. Commands: `ARM_AWAY`, `ARM_HOME`, `ARM_NIGHT`, `DISARM`, `TRIGGER` |
+
+## Troubleshooting
+
+If entities are missing, duplicated, or in an inconsistent state:
+
+### Reset buttons
+
+Use these buttons to fix missing, duplicated, or out-of-sync entities:
+
+![Reset all topics button](/assets/MQTT/MQTT%20-%20reset.png)
+
+| Location | Button | Effect |
+|----------|--------|--------|
+| **Plugin settings** (General → Homeassistant) | **Reset all topics** | Clears all retained topics, removes devices from Home Assistant (if HA API is configured), then republishes discovery for the entire plugin |
+| **Per camera** (Camera device → Homeassistant subgroup) | **Rediscover device on Home Assistant** | Removes that camera from Home Assistant, clears its topics, then republishes discovery for that camera only |
+
+### Steps to try
+
+1. **Use the reset buttons** — Try **Reset all topics** (plugin) or **Rediscover device on Home Assistant** (per camera) first.
+2. **Remove devices from Home Assistant** — In HA: Settings → Devices & Services → MQTT (or Scrypted Advanced Notifier) → delete the affected Scrypted devices.
+3. **Clear topics from the MQTT broker** (MQTT transport only) — Delete retained topics under `homeassistant/` for the affected devices (e.g. `homeassistant/device/scrypted-an-{deviceId}/config`).
+4. **Restart the plugin** — Restart Advanced Notifier in Scrypted to trigger a fresh discovery.
+
+:::warning Device name changes
+If you edit a device name, delete the entities manually in Home Assistant and restart the plugin to force correct re-creation.
+:::

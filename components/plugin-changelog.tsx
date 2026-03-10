@@ -15,7 +15,16 @@ export function PluginChangelog({ slug }: PluginChangelogProps) {
   useEffect(() => {
     fetch(`/api/plugin-info/${slug}`)
       .then((r) => (r.ok ? r.json() : null))
-      .then((data) => data?.changelog && setChangelog(data.changelog))
+      .then((data) => {
+        if (data?.changelog) {
+          // Strip <details><summary>Changelog</summary>...</details> wrapper if present
+          let cl = data.changelog;
+          cl = cl.replace(/^\s*<details>\s*\n*\s*<summary>[^<]*<\/summary>\s*\n*/i, '');
+          cl = cl.replace(/<\/details>\s*$/i, '');
+          cl = cl.replace(/^#\s+changelog\s*\n*/i, '');
+          setChangelog(cl);
+        }
+      })
       .catch(() => {});
   }, [slug]);
 

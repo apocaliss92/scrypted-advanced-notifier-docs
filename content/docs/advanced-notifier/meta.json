@@ -3,8 +3,9 @@
   "defaultOpen": true,
   "collapsible": true,
   "pages": [
-    "mqtt",
+    "discovery",
     "homeassistant",
+    "mqtt",
     "notifications",
     "nvr-notifications-passthrough",
     "ai-setup",

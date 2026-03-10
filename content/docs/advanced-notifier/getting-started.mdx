@@ -13,10 +13,10 @@ Advanced Notifier lets you easily integrate with external systems such as [Friga
 
 It is a comprehensive Scrypted plugin that:
 
-- **MQTT / Home Assistant** — Exposes camera metadata and detection state to MQTT with full Home Assistant autodiscovery
+- **Home Assistant Integration** — Exposes camera metadata and detection state to Home Assistant via MQTT or WebSocket transport with full autodiscovery
 - **Notification rules** — Detection, occupancy, timelapse, audio, and recording rules with customizable notifiers
 - **Webhooks** — Exposes webhooks with relevant events, rule artifacts, and latest images per detection type per camera
-- **Advanced alarm system** — Security system tied to detection rules, MQTT, and HomeKit
+- **Advanced alarm system** — Security system tied to detection rules, Home Assistant, and HomeKit
 - **Sequences** — Define action sequences (PTZ, scripts, switches, lock/entry) executable via rules in various conditions
 - **MP4 / GIF generation** — Generates video clips and GIFs for notifications and rule artifacts
 
@@ -24,8 +24,9 @@ The plugin also serves as a hook for an **iOS / PWA app** for live view and even
 
 ## Next Steps
 
-- [MQTT](/docs/advanced-notifier/mqtt) — Enable MQTT
-- [Home Assistant](/docs/advanced-notifier/homeassistant) — Integration and autodiscovery
+- [Discovery](/docs/advanced-notifier/discovery) — Entity discovery, transport options, and settings
+- [Home Assistant](/docs/advanced-notifier/homeassistant) — HA connection, WebSocket transport, and automations
+- [MQTT](/docs/advanced-notifier/mqtt) — MQTT broker setup
 - [Notifications](/docs/advanced-notifier/notifications) — Configure notifiers
 - [Rules](/docs/advanced-notifier/rules) — Detection, occupancy, timelapse, audio, recording
 - [Sequences](/docs/advanced-notifier/sequences) — Action sequences

@@ -1,18 +1,18 @@
 ---
 title: People Tracker
-description: Track known faces across cameras via MQTT
+description: Track known faces across cameras via Home Assistant
 ---
 
 # People Tracker
 
-The People Tracker is an MQTT device (`scrypted-an-people-tracker`) that exposes **known faces** as entities in Home Assistant. For each recognized person (face label), it publishes the current room/location, last image, and last detection timestamp.
+The People Tracker is a device (`scrypted-an-people-tracker`) that exposes **known faces** as entities in Home Assistant. For each recognized person (face label), it publishes the current room/location, last image, and last detection timestamp.
 
 ## Requirements
 
-- **MQTT** enabled (see [MQTT](/docs/advanced-notifier/mqtt))
+- **Home Assistant integration** enabled (see [Discovery](/docs/advanced-notifier/discovery))
 - **Face recognition** — Cameras must have face detection with labeled identities (e.g. via Scrypted Object Detection, NVR, or Frigate)
 
-## MQTT Entities
+## Entities
 
 Per person (known face label):
 
@@ -26,7 +26,7 @@ The `{person_slug}` is derived from the face label (e.g. a label "John" becomes 
 
 ## Faces Source
 
-The **Faces source** setting (plugin **General → MQTT** and per-camera **Camera device → MQTT**) controls which detection source feeds the People Tracker:
+The **Faces source** setting (plugin **General → Homeassistant** and per-camera **Camera device → Homeassistant**) controls which detection source feeds the People Tracker:
 
 | Option | Description |
 |--------|-------------|
@@ -38,5 +38,5 @@ Per-camera overrides allow different cameras to use different sources. Default f
 
 ## Related
 
-- [MQTT](/docs/advanced-notifier/mqtt) — MQTT setup and autodiscovery
+- [Discovery](/docs/advanced-notifier/discovery) — Entity setup and autodiscovery
 - [Home Assistant](/docs/advanced-notifier/homeassistant) — Integration with Home Assistant
