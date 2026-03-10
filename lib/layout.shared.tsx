@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export const gitConfig = {
   user: 'apocaliss92',
-  repo: 'scrypted-advanced-notifier',
+  repo: 'scrypted-advanced-notifier-docs',
   branch: 'main',
 };
 
