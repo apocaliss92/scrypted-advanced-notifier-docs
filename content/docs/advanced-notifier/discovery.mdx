@@ -175,6 +175,5 @@ Use these buttons to fix missing, duplicated, or out-of-sync entities:
 3. **Clear topics from the MQTT broker** (MQTT transport only) — Delete retained topics under `homeassistant/` for the affected devices (e.g. `homeassistant/device/scrypted-an-{deviceId}/config`).
 4. **Restart the plugin** — Restart Advanced Notifier in Scrypted to trigger a fresh discovery.
 
-:::warning Device name changes
-If you edit a device name, delete the entities manually in Home Assistant and restart the plugin to force correct re-creation.
-:::
+> [!WARNING] Device name changes
+> If you edit a device name, delete the entities manually in Home Assistant and restart the plugin to force correct re-creation.

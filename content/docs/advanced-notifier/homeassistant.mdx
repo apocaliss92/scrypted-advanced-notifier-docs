@@ -69,9 +69,9 @@ After installing via HACS:
 
 ![WebSocket transport settings](/assets/Homeassistant/HA%20-%20transport.png)
 
-:::info No MQTT broker needed
-With WebSocket transport, you do **not** need an MQTT broker. The plugin pushes state updates to the HA custom integration via REST and receives commands back via REST. No admin token or persistent WebSocket connection is required.
-:::
+> [!NOTE] No MQTT broker needed
+> With WebSocket transport, you do **not** need an MQTT broker. The plugin pushes state updates to the HA custom integration via REST and receives commands back via REST. No admin token or persistent WebSocket connection is required.
+
 
 ### HA Secret Management
 
@@ -93,9 +93,8 @@ If you need to regenerate the secret (e.g. for security reasons), you have two o
 
    ![Paste the new HA Secret](/assets/Homeassistant/HA%20-%20update%20secret%202.png)
 
-:::warning Secret mismatch
-If the secret on the plugin does not match the one on HA, you will see `401 Unauthorized` errors in the plugin logs. The plugin will log a warning with instructions to fix the mismatch. Use one of the two methods above to re-sync the secret.
-:::
+> [!WARNING] Secret mismatch
+> If the secret on the plugin does not match the one on HA, you will see `401 Unauthorized` errors in the plugin logs. The plugin will log a warning with instructions to fix the mismatch. Use one of the two methods above to re-sync the secret.
 
 For the list of discovered entities and shared settings, see [Discovery](/docs/advanced-notifier/discovery).
 
@@ -119,9 +118,8 @@ Go to **General → Homeassistant**:
 
 ![Manual Home Assistant credentials](/assets/Homeassistant/HA%20-%20manual%20login.png)
 
-:::info When is the token needed?
-The HA Personal Access Token is only required for **push notifications**, **automation creation**, and **device deletion**. If you only use the custom integration for entity discovery and state updates, you can skip this step.
-:::
+> [!NOTE] When is the token needed?
+> The HA Personal Access Token is only required for **push notifications**, **automation creation**, and **device deletion**. If you only use the custom integration for entity discovery and state updates, you can skip this step.
 
 ### Step 3: Scrypted Token (for proxy app)
 
@@ -144,9 +142,8 @@ When Home Assistant is enabled, the plugin automatically generates two automatio
 
 These automations are created at plugin startup when **Homeassistent enabled** is on. If you enable Home Assistant after initial setup, restart the plugin or toggle the setting to trigger generation.
 
-:::info
-Automation creation requires the **HA Personal Access Token** to be configured (see Step 2).
-:::
+> [!NOTE]
+> Automation creation requires the **HA Personal Access Token** to be configured (see Step 2).
 
 ## Related
 
