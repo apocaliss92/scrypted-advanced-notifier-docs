@@ -1,6 +1,6 @@
 ---
 title: Home Assistant
-description: Home Assistant connection, WebSocket transport, automations, and custom integration
+description: Home Assistant connection, REST push transport, automations, and custom integration
 ---
 
 # Home Assistant
@@ -31,26 +31,50 @@ After installing via HACS:
 | Parameter | Where to find it |
 |-----------|-----------------|
 | **Scrypted URL** | The base URL of your Scrypted instance, e.g. `https://192.168.1.4:10443`. This must be reachable from Home Assistant. |
-| **HA Secret** | In the Advanced Notifier plugin: **General → Homeassistant → HA WebSocket Secret**. This is an auto-generated secret — copy it exactly. |
+| **HA Secret** | In the Advanced Notifier plugin: **General → Homeassistant → HA Secret**. This is an auto-generated shared secret — copy it exactly. |
 
 3. After submitting, the integration discovers all devices and entities from the plugin:
 
 ![Discovered devices after setup](/assets/Homeassistant/HA%20-%20add%20integration%202.png)
 
-4. You can manage which cameras are imported via **Manage devices**:
+4. You can manage which cameras are imported via **Configure → Manage devices**:
 
 ![Manage devices — select cameras](/assets/Homeassistant/HA%20-%20add%20integration%203.png)
 
 ### WebSocket Transport Setup
 
 1. Go to **General → Homeassistant** and set **Discovery layer** to **websocket**
-2. Copy the **HA WebSocket Secret** into the HA custom integration config flow (see above)
-3. Set **HA Allowed Origins** to your Home Assistant local address (e.g. `http://homeassistant.local:8123`). This is a comma-separated list of HA base URLs allowed to connect to the plugin's WebSocket server.
+2. Copy the **HA Secret** into the HA custom integration config flow (see above)
+3. Set **HA Allowed Origins** to your Home Assistant local address (e.g. `http://homeassistant.local:8123`). This is a comma-separated list of HA base URLs allowed to connect to the plugin.
 
 ![WebSocket transport settings](/assets/Homeassistant/HA%20-%20transport.png)
 
 :::info No MQTT broker needed
-With WebSocket transport, you do **not** need an MQTT broker. The custom integration receives state updates via HA WebSocket events and sends commands back via REST.
+With WebSocket transport, you do **not** need an MQTT broker. The plugin pushes state updates to the HA custom integration via REST and receives commands back via REST. No admin token or persistent WebSocket connection is required.
+:::
+
+### HA Secret Management
+
+The **HA Secret** is a shared secret used to authenticate communication between the plugin and the HA custom integration. It is auto-generated when the plugin starts for the first time.
+
+#### Regenerating the Secret
+
+If you need to regenerate the secret (e.g. for security reasons), you have two options:
+
+1. **Automatic (recommended):** Click the **Regenerate HA Secret** button in the plugin settings (**General → Homeassistant**). The plugin will generate a new secret and push it to the HA integration automatically. If HA is reachable, both sides are updated — no manual action required.
+
+2. **Manual:** If the automatic push fails (e.g. HA is unreachable, or the secrets are already out of sync), you need to update the secret on HA manually:
+   - Copy the new secret from the plugin settings (**General → Homeassistant → HA Secret**)
+   - In HA, go to **Settings → Integrations → Scrypted Advanced Notifier → Configure** and select **Update HA Secret**:
+
+   ![Configure menu — select Update HA Secret](/assets/Homeassistant/HA%20-%20update%20secret%201.png)
+
+   - Paste the new secret and confirm:
+
+   ![Paste the new HA Secret](/assets/Homeassistant/HA%20-%20update%20secret%202.png)
+
+:::warning Secret mismatch
+If the secret on the plugin does not match the one on HA, you will see `401 Unauthorized` errors in the plugin logs. The plugin will log a warning with instructions to fix the mismatch. Use one of the two methods above to re-sync the secret.
 :::
 
 For the list of discovered entities and shared settings, see [Discovery](/docs/advanced-notifier/discovery).
