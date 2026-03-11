@@ -7,6 +7,26 @@ description: Home Assistant connection, REST push transport, automations, and cu
 
 The Home Assistant connection is required to use **Home Assistant notifiers** for push notifications. The plugin also generates automations needed for **notification snoozing** (snooze actions on push notifications) and for the **onboard [alarm system](/docs/advanced-notifier/alarm-system)** (arming, disarming, triggering).
 
+## How Communication Works
+
+The plugin communicates with Home Assistant through two independent channels:
+
+### REST Push Transport (Custom Integration)
+
+When using the **WebSocket transport** (Discovery layer), the plugin pushes state updates, entity changes, and heartbeats to the HA custom integration via REST POST to `/api/scrypted_an/push`. Commands from HA (e.g. switch toggles, alarm actions) are sent back to the plugin via REST POST to the plugin's `/public/ha/command` endpoint.
+
+This channel is authenticated using a **shared HA Secret** — no HA admin token or persistent WebSocket connection is required.
+
+### HA Personal Access Token
+
+The **HA Personal Access Token** (Long-Lived Access Token) is **not** needed for entity discovery or state updates when using the custom integration. It is only required for:
+
+- **Sending push notifications** via HA notifiers (e.g. `notify.mobile_app_*`)
+- **Creating automations** (snooze and alarm actions)
+- **Deleting devices** from HA (when removing entities via MQTT)
+
+If you only use the custom integration for entity discovery and don't need push notifications or automations, you can skip the token configuration.
+
 ## HA Custom Integration (HACS)
 
 If you use **WebSocket transport** (recommended), install the custom integration via HACS:
@@ -99,6 +119,10 @@ Go to **General → Homeassistant**:
 
 ![Manual Home Assistant credentials](/assets/Homeassistant/HA%20-%20manual%20login.png)
 
+:::info When is the token needed?
+The HA Personal Access Token is only required for **push notifications**, **automation creation**, and **device deletion**. If you only use the custom integration for entity discovery and state updates, you can skip this step.
+:::
+
 ### Step 3: Scrypted Token (for proxy app)
 
 The **Scrypted token** in **General → Homeassistant** is used only to allow opening the camera stream through the Home Assistant proxy app. This token is found on the Home Assistant entity created by the Scrypted integration (e.g. `sensor.scrypted_token_{ip}`).
@@ -119,6 +143,10 @@ When Home Assistant is enabled, the plugin automatically generates two automatio
 2. **Alarm automation** (`scrypted_advanced_security_system_alarm_action`) — Handles alarm panel commands (arm, disarm, trigger) for the onboard alarm system.
 
 These automations are created at plugin startup when **Homeassistent enabled** is on. If you enable Home Assistant after initial setup, restart the plugin or toggle the setting to trigger generation.
+
+:::info
+Automation creation requires the **HA Personal Access Token** to be configured (see Step 2).
+:::
 
 ## Related
 
