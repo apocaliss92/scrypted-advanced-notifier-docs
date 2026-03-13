@@ -1,0 +1,112 @@
+---
+title: MJPEG Rebroadcast
+description: Convert Scrypted camera streams to MJPEG over HTTP
+---
+
+<PluginTitle slug="mjpeg-rebroadcast" title="MJPEG Rebroadcast" />
+
+Scrypted mixin plugin that converts camera streams into **MJPEG over HTTP**. Useful for systems that only support MJPEG (older NVRs, home automation dashboards, embedded displays) or when you need a simple HTTP video endpoint without WebRTC or RTSP.
+
+## Features
+
+- **Three source modes** — Scrypted Snapshot (polling), RTSP via FFmpeg (transcoding), or Scrypted Decoder (native pipeline)
+- **Token-based URLs** — Each stream gets a unique secret URL routed through Scrypted's public HTTP endpoint (no separate ports, no authentication needed)
+- **All streams exposed** — Every discovered RTSP rebroadcast stream gets an MJPEG endpoint
+- **Prebuffer support** — Selected streams can have their producer always running for instant playback
+- **On-demand lifecycle** — Non-prebuffered streams start the producer when the first client connects and stop when the last disconnects
+- **Configurable quality** — Adjust FPS, JPEG quality, and output resolution per camera (FFmpeg mode)
+- **Auto-restart** — Producers are automatically restarted after max runtime (4h) or idle timeout (30min with 0 clients for prebuffer streams)
+
+## Prerequisites
+
+- **Scrypted Rebroadcast plugin** must be installed (for RTSP/FFmpeg and Decoder modes)
+- **FFmpeg** must be available on the system (for RTSP/FFmpeg mode only)
+- **NVR or Object Detection plugin** recommended (for Scrypted Decoder mode fallback)
+
+## Installation
+
+1. Install **MJPEG Rebroadcast** from the Scrypted plugin store (or side-load the npm package)
+2. The plugin automatically attaches to all cameras and doorbells
+3. Stream URLs appear in each camera's mixin settings under **Stream URLs**
+
+## Per-Camera Settings
+
+Each camera gets its own settings under the **MJPEG Rebroadcast** group:
+
+| Setting | Description |
+|---------|-------------|
+| **MJPEG source** | `Scrypted Snapshot (polling)`, `Scrypted RTSP via FFmpeg`, or `Scrypted Decoder` |
+| **FPS** | Target frames per second (default: 5, FFmpeg mode only) |
+| **Quality** | JPEG quality 1-100 (default: 80, FFmpeg mode only) |
+| **Width** | Output width in pixels (blank = original, FFmpeg mode only) |
+| **Prebuffer streams** | Streams that will have the producer always running (instant playback) |
+| **MJPEG server enabled** | Enable/disable MJPEG endpoints for this camera |
+| **Debug logging** | Enable verbose debug logging |
+
+## Source Modes
+
+### Scrypted Snapshot (polling)
+- Requests a JPEG snapshot from Scrypted at the configured FPS interval
+- Lower resource usage, but limited by camera snapshot speed
+- FPS, quality, and width settings are ignored (uses camera defaults)
+- Only one endpoint is created (no stream selection)
+- Best for low-FPS dashboards or status displays
+
+### Scrypted RTSP via FFmpeg
+- Connects to the RTSP rebroadcast URL and transcodes to MJPEG via FFmpeg
+- Higher quality and smoother video
+- Configurable JPEG quality, FPS, and output resolution
+- One endpoint per discovered RTSP rebroadcast stream
+- Best for live viewing in MJPEG-only clients
+
+### Scrypted Decoder
+- Uses Scrypted's native decoder pipeline (VideoFrame → Image → JPEG)
+- No FFmpeg subprocess — decoding is handled by Scrypted's built-in decoder or a VideoFrameGenerator plugin (NVR, Object Detection)
+- Falls back to VideoFrameGenerator if the native decoder fails
+- May benefit from hardware acceleration depending on the platform
+- FPS, quality, and width settings are ignored (decoder controls the output)
+- One endpoint per discovered stream
+- Best when you want to avoid external FFmpeg dependencies
+
+## Accessing the Streams
+
+Stream URLs are shown in each camera's mixin settings under the **Stream URLs** subgroup. The format is:
+
+```
+http://<scrypted-host>:<port>/endpoint/@apocaliss92/scrypted-mjpeg-rebroadcast/public/<token>
+```
+
+Each stream token is derived from the RTSP rebroadcast URL path, which is already a secret value. No additional authentication is needed — the URL itself is the credential.
+
+A global status endpoint (no token) returns JSON with all active streams and their subscriber counts:
+
+```
+http://<scrypted-host>:<port>/endpoint/@apocaliss92/scrypted-mjpeg-rebroadcast/public/
+```
+
+## Prebuffer vs On-Demand
+
+| Behavior | Prebuffer streams | On-demand streams |
+|----------|-------------------|-------------------|
+| Producer starts | Immediately at plugin startup | When first client connects |
+| Producer stops | Never (restarts periodically) | When last client disconnects |
+| First client latency | Instant (stream already running) | Short delay (producer startup) |
+| Idle restart | After 30min with 0 clients | N/A (already stopped) |
+| Max runtime restart | After 4 hours | After 4 hours |
+
+## Use Cases
+
+- **Home Assistant** — Use as a generic camera with MJPEG URL
+- **Legacy NVRs** — Connect systems that only support MJPEG input
+- **Browser dashboards** — Embed `<img>` tags pointing to the MJPEG URL
+- **Kiosk displays** — Simple HTTP stream for embedded screens
+- **CamStack** — Use MJPEG streams as a fallback when WebRTC is not available
+
+## Troubleshooting
+
+- **No stream URLs** — Check that the Rebroadcast plugin is installed and the camera has RTSP URLs
+- **Black/frozen stream** — Verify FFmpeg is installed and working (FFmpeg mode); check the plugin console for errors
+- **High CPU usage** — Lower the FPS or increase the quality value; consider using snapshot or decoder mode instead
+- **First client delay** — Use prebuffer streams for instant playback, or switch to decoder mode which may start faster
+
+<PluginChangelog slug="mjpeg-rebroadcast" />

@@ -3,6 +3,8 @@
     "advanced-notifier",
     "frigate-bridge",
     "reolink-native",
+    "onvif-rebroadcast",
+    "mjpeg-rebroadcast",
     "yamnet",
     "monitor",
     "remote-backup",

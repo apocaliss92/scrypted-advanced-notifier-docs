@@ -1,0 +1,103 @@
+---
+title: CamStack
+description: Companion app for live view, multi-camera grids, events timeline, and NVR playback
+---
+
+# CamStack
+
+CamStack is the companion app for Advanced Notifier. It provides live video feeds, multi-camera grids, an events timeline, and NVR playback — supporting both Scrypted and Frigate NVR as sources.
+
+## Getting the App
+
+| Platform | How to get it |
+|----------|--------------|
+| **iOS** | [TestFlight beta](https://testflight.apple.com/join/CYnbJFqb) |
+| **PWA (any browser / Android)** | Served directly by Scrypted via Advanced Notifier — see below |
+
+### Hosted version (PWA via Scrypted)
+
+When Advanced Notifier is installed, CamStack is available as a PWA served by the plugin itself. Open the Advanced Notifier plugin page in Scrypted and click the **CamStack** link. The app opens in the browser and can be installed as a PWA ("Add to Home Screen").
+
+In this mode, **no login is required**: CamStack automatically connects to the Scrypted instance it is served from, using the existing browser session. No address or credentials to enter.
+
+> [!NOTE]
+> The hosted PWA is always in sync with the installed Advanced Notifier version — no manual updates needed.
+
+## Setting Up Integrations
+
+Open **Settings → Integrations** and add one or more sources. Cameras from all configured integrations appear in a unified list.
+
+### Scrypted
+
+| Field | Description |
+|-------|-------------|
+| **Name** | A label for this instance |
+| **Base URL** | Scrypted address, e.g. `https://192.168.1.4:10443` |
+| **Local URL** | Optional local network address (tried first for faster connections) |
+| **Public URL** | Optional remote/cloud address (used as fallback) |
+| **Username** | Scrypted login username |
+| **Password** | Scrypted login password |
+
+> [!NOTE] Self-signed certificates
+> If your Scrypted instance uses a self-signed certificate, open the address in your browser and accept the security warning before connecting from CamStack.
+
+### Frigate NVR
+
+| Field | Description |
+|-------|-------------|
+| **Name** | A label for this instance |
+| **Local URL** | Frigate address on the local network, e.g. `http://192.168.1.10:5000` |
+| **Public URL** | Optional remote address (used as fallback) |
+| **Username / Password** | Frigate credentials (if authentication is enabled) |
+| **Token** | Frigate API token (alternative to username/password) |
+
+### Home Assistant
+
+| Field | Description |
+|-------|-------------|
+| **Local URL** | Home Assistant address, e.g. `http://homeassistant.local:8123` |
+| **Public URL** | Optional remote address |
+| **Token** | Long-Lived Access Token from your HA profile |
+
+## Adding Cameras
+
+After configuring an integration, go to **Settings → Cameras** and add cameras from the list of discovered devices. Each camera can be individually named and configured.
+
+For Frigate, cameras are detected automatically from the Frigate API. For Scrypted, all camera devices from the connected instance are available.
+
+## Features
+
+### Live View
+
+Tap any camera to open a full-screen live stream. Supported across local and remote networks.
+
+### Multi-Camera Grids
+
+Create custom grids with multiple cameras displayed simultaneously. Each grid can be named and pinned to the home tab for quick access. Useful for monitoring multiple areas at a glance.
+
+### Events Timeline
+
+The **Events** tab shows a chronological list of detections from all cameras. You can:
+
+- Filter by camera, detection type (person, vehicle, animal, motion, audio), and date
+- Tap any event to view the detection snapshot
+- Jump directly to the corresponding NVR recording from an event
+
+### NVR Playback
+
+For cameras with NVR recording (Scrypted NVR or Frigate), CamStack supports video playback directly in the app — seek through the timeline and control playback speed.
+
+### PTZ Control
+
+For cameras with PTZ support, on-screen controls appear during live view to pan, tilt, and zoom the camera.
+
+### Intercom / Two-Way Audio
+
+Cameras that support two-way audio (e.g. doorbells) show a microphone button during live view. Tap to start talking.
+
+## Related
+
+- [Getting Started](/docs/advanced-notifier/getting-started) — Install and configure Advanced Notifier
+- [Notifications](/docs/advanced-notifier/notifications) — Push notification setup
+- [Rules](/docs/advanced-notifier/rules) — Detection, occupancy, and recording rules
+- [NVR Notifications Passthrough](/docs/advanced-notifier/nvr-notifications-passthrough) — NVR clip links in notifications

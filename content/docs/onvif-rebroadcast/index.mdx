@@ -1,0 +1,93 @@
+---
+title: ONVIF Rebroadcast
+description: Expose Scrypted cameras as ONVIF-discoverable devices
+---
+
+<PluginTitle slug="onvif-rebroadcast" title="ONVIF Rebroadcast" />
+
+Scrypted mixin plugin that exposes your cameras as fully compliant **ONVIF devices**. Any system that supports ONVIF discovery (NVRs, VMS, home automation) can automatically find and connect to your Scrypted cameras using their RTSP rebroadcast streams.
+
+## Features
+
+- **WS-Discovery** — Cameras are automatically discoverable via ONVIF multicast (239.255.255.250:3702)
+- **RTSP stream mapping** — All Scrypted rebroadcast streams (main, sub, third) are exposed as ONVIF media profiles
+- **Event forwarding** — Motion and object detection events from Scrypted are forwarded as ONVIF events via PullPoint subscription
+- **PTZ support** — If the camera has PTZ capabilities in Scrypted, they are exposed via ONVIF PTZ service
+- **Two-way audio** — Intercom/audio output capabilities are advertised when available
+- **WS-Security authentication** — UsernameToken Digest and HTTP Basic auth support
+- **Deterministic identity** — Each camera gets a stable UUID and port across restarts
+- **Per-camera configuration** — Enable/disable, custom port, debug logging per camera
+
+## Prerequisites
+
+- **Scrypted Rebroadcast plugin** must be installed and running — this plugin reads the RTSP rebroadcast URLs from it
+
+## Installation
+
+1. Install **ONVIF Rebroadcast** from the Scrypted plugin store (or side-load the npm package)
+2. Configure **Username** and **Password** in the plugin settings (optional, leave empty to disable auth)
+3. The plugin automatically attaches to all cameras and doorbells
+4. Cameras become discoverable via ONVIF within seconds
+
+## Plugin Settings
+
+| Setting | Description |
+|---------|-------------|
+| **Username** | Username for ONVIF authentication (leave empty to disable) |
+| **Password** | Password for ONVIF authentication |
+
+## Per-Camera Settings
+
+Each camera gets its own settings under the **ONVIF Rebroadcast** group:
+
+| Setting | Description |
+|---------|-------------|
+| **ONVIF port** | Port for this camera's ONVIF server (leave empty for auto-assignment) |
+| **ONVIF server enabled** | Enable/disable the ONVIF server for this camera |
+| **Debug events** | Enable verbose logging for motion and object detection events |
+
+## ONVIF Services
+
+The plugin implements the following ONVIF services per camera:
+
+### Device Service (`/onvif/device_service`)
+- `GetSystemDateAndTime` — Returns current UTC time
+- `GetDeviceInformation` — Manufacturer, model, firmware, serial from Scrypted
+- `GetCapabilities` — Advertises Media, PTZ, Events based on device capabilities
+- `GetServices` — Lists all available service endpoints
+- `GetScopes` — ONVIF scopes (name, hardware, profile, type)
+- `GetNetworkInterfaces` — Network information
+
+### Media Service (`/onvif/media_service`)
+- `GetProfiles` — One profile per RTSP rebroadcast stream with video/audio configuration
+- `GetStreamUri` — Returns the RTSP rebroadcast URL for the requested profile
+- `GetVideoSources`, `GetAudioSources` — Source configurations
+- `GetSnapshotUri` — Snapshot endpoint (when available)
+
+### PTZ Service (`/onvif/ptz_service`) *(when PTZ is available)*
+- `ContinuousMove` / `Stop` — Pan, tilt, zoom control
+- `GetConfigurations` / `GetNodes` — PTZ capability information
+- `GotoPreset` / `SetPreset` / `GetPresets` — Preset management
+
+### Event Service (`/onvif/event_service`)
+- `CreatePullPointSubscription` — Subscribe to events
+- `PullMessages` — Poll for motion and object detection events
+- `Renew` / `Unsubscribe` — Subscription management
+
+## How It Works
+
+1. When Scrypted loads the plugin, it attaches as a mixin to every camera/doorbell
+2. The mixin discovers all RTSP rebroadcast URLs from the Rebroadcast plugin
+3. An HTTP server starts on a per-camera port, serving ONVIF SOAP responses
+4. WS-Discovery announces the camera on the local network via UDP multicast
+5. Motion and object detection events from Scrypted are queued and served via PullPoint
+
+## Troubleshooting
+
+- **Camera not discovered** — Ensure the ONVIF server is enabled in the camera mixin settings and check the plugin console for errors
+- **Authentication errors** — Verify username/password match in both plugin settings and the ONVIF client
+- **No streams in profiles** — Make sure the Rebroadcast plugin is installed and the camera has RTSP rebroadcast URLs configured
+- **Port conflicts** — If a port is in use, the plugin automatically assigns a random available port and saves it
+- **Enable Debug events** to see detailed motion/detection event forwarding in the console
+
+<PluginChangelog slug="onvif-rebroadcast" />
