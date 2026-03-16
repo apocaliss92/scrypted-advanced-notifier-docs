@@ -1,0 +1,96 @@
+---
+title: Troubleshooting
+description: Common issues and solutions for Advanced Notifier and the Home Assistant integration
+---
+
+This page covers common issues, how to diagnose them, and their solutions.
+
+## Home Assistant Integration
+
+### Switches and controls have no effect
+
+**Symptom:** You toggle a switch (e.g. Light, Notifications enabled, Privacy) in Home Assistant, the switch appears to toggle but nothing happens on the camera. The switch may revert back after a few seconds.
+
+**Cause:** The device is selected in the HA custom integration but the **"HA integration"** (`enabledToMqtt`) setting is not enabled for that device in the Advanced Notifier plugin on Scrypted.
+
+When a device is not enabled for HA integration in the plugin:
+- The plugin does not subscribe to command topics for that device
+- Commands sent from HA are received by the plugin but silently dropped because no handler is registered
+- The plugin logs will show: `NO handler found for topic="scrypted-an/scrypted-an-{id}/..."`
+
+**Solution:**
+1. Open Scrypted and navigate to the camera/device
+2. Go to the **Advanced Notifier** extension settings for that device
+3. Enable **"HA integration"** (the `enabledToMqtt` toggle)
+4. Restart the Advanced Notifier plugin (or wait for the next autodiscovery cycle)
+
+> [!NOTE]
+> Starting from plugin version 5.0.11, the plugin will log explicit warnings when commands arrive for disabled devices, and the `/public/ha/devices` endpoint will no longer list devices that are not enabled for HA integration.
+
+### Entities show "Unknown" state
+
+**Symptom:** Diagnostic entities like **Battery**, **Online**, **Sleeping**, or rule-based entities like **Armed running** / **Disarmed running** show "Unknown" in Home Assistant.
+
+**Cause:** These entities are registered during MQTT/HA discovery but their initial state is not published until the first state update arrives. For battery-powered cameras that sleep most of the time, this update may take a long time (e.g. 60+ minutes).
+
+**Possible reasons:**
+- **Battery/Online/Sleeping:** The device properties (`batteryLevel`, `online`, `sleeping`) may be `undefined` or `null` at the time of discovery, so no initial value is published
+- **Rule running entities:** The `currentlyActive` property of the rule may be `undefined` at discovery time
+- **Battery-powered cameras:** The camera connects briefly (e.g. 30 seconds every hour) and may not trigger a state update during the discovery window
+
+**Solution:**
+- Ensure the device has the **"HA integration"** setting enabled
+- For battery cameras: wait for the next wake cycle (typically every 60 minutes) for values to populate
+- Restart the Advanced Notifier plugin to force a fresh discovery with current values
+
+### Device selected in HA but entities not created
+
+**Symptom:** You selected a device during the HA custom integration setup, but no entities appear for it in Home Assistant.
+
+**Cause:** The device is not enabled for HA integration in the plugin. The HA integration will log:
+```
+Device "scrypted-an-{id}" is selected in HA but was not returned by the plugin.
+It may not have "HA integration" enabled in the Advanced Notifier device settings.
+```
+
+**Solution:** Enable **"HA integration"** for the device in the Advanced Notifier plugin settings, then reload the integration in HA.
+
+### REST push connection errors (ECONNRESET)
+
+**Symptom:** Plugin logs show intermittent errors like:
+```
+[HaEventClient] REST push failed (1x): read ECONNRESET
+[HaEventClient] REST push connection restored
+```
+
+**Cause:** Network instability between Scrypted and Home Assistant. The REST push transport automatically retries and recovers. Occasional failures are normal, especially with reverse proxies or Docker networking.
+
+**When to worry:** If failures are continuous or the plugin logs `REST push endpoint not reachable` persistently, check:
+- That the HA URL configured in the plugin is correct and reachable from Scrypted
+- That the HA Secret matches between plugin and HA integration
+- Reverse proxy timeout settings (increase if needed)
+- Docker network connectivity between containers
+
+## Battery-Powered Cameras
+
+### Privacy mode and battery thresholds
+
+**Symptom:** Camera features (recording, snapshots, rebroadcast) are automatically disabled despite being enabled in HA.
+
+**Cause:** The plugin's **battery threshold** feature automatically disables features when battery drops below configured levels to conserve power. The plugin logs will show:
+```
+Battery level XX% matched threshold "Critical" (level: 30%). Applying: recording=false, snapshots=false, rebroadcast=false
+```
+
+**Solution:** This is intentional behavior. You can adjust the battery thresholds in the Advanced Notifier camera settings. The thresholds define which features are disabled at each battery level.
+
+### Camera shows as sleeping/offline
+
+**Symptom:** Battery-powered cameras show as offline or sleeping for long periods.
+
+**Cause:** Battery cameras (e.g. Reolink battery models) intentionally go to sleep to conserve power. They typically wake up briefly:
+- Every 60 minutes for a forced battery update
+- When motion is detected
+- When manually woken via the camera app
+
+During sleep, the camera is not connected to Scrypted and no state updates are sent to HA.
