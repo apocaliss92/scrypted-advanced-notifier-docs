@@ -3,6 +3,7 @@
     "advanced-notifier",
     "frigate-bridge",
     "reolink-native",
+    "wyze-native",
     "onvif-rebroadcast",
     "mjpeg-rebroadcast",
     "yamnet",

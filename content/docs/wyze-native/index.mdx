@@ -1,0 +1,33 @@
+---
+title: Wyze Native
+description: Native Wyze camera support using P2P/DTLS protocol — no cloud streaming required
+---
+
+<PluginTitle slug="wyze-native" title="Wyze Native" />
+
+Stream Wyze cameras in Scrypted using the native P2P/DTLS protocol. Video is streamed directly from the camera over your local network — the Wyze cloud is only used for initial device discovery.
+
+> [!NOTE] Early Release
+> This plugin is in early release. Currently supports DTLS-enabled Wyze cameras with H264 video. Report issues on [GitHub](https://github.com/apocaliss92/scrypted-wyze-native).
+
+## Features
+
+- **Local P2P streaming** — video goes directly from camera to Scrypted, no cloud relay
+- **H264 1080p/720p/360p/2K** — configurable resolution per camera
+- **Auto-discovery** — finds all cameras from your Wyze account
+- **Multiple concurrent viewers** — single P2P connection shared across viewers
+- **Idle teardown** — disconnects when no viewers are active (configurable)
+- **Two-way audio support** — detected automatically (playback coming soon)
+
+## Requirements
+
+- Wyze camera(s) on the same local network as Scrypted
+- Wyze account with **email + password** authentication (see [Getting Started](/docs/wyze-native/getting-started))
+- Wyze Developer API credentials
+
+## Quick Links
+
+<Cards>
+  <Card title="Getting Started" href="/docs/wyze-native/getting-started" />
+  <Card title="Credentials Setup" href="/docs/wyze-native/credentials" />
+</Cards>

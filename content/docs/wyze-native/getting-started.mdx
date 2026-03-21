@@ -1,0 +1,89 @@
+---
+title: Getting Started
+description: Install and configure Wyze Native for Scrypted
+---
+
+# Getting Started
+
+## Prerequisites
+
+- [Scrypted](https://scrypted.app) installed and running
+- Wyze camera(s) on the same local network
+- Wyze account with email + password authentication ([setup guide](/docs/wyze-native/credentials))
+- Wyze Developer API Key and Key ID ([how to get them](/docs/wyze-native/credentials#2-wyze-developer-api-credentials))
+
+## Installation
+
+1. Install **Wyze Native** from the Scrypted plugin store
+2. Open the plugin settings
+3. Enter your Wyze credentials (see [Credentials Setup](/docs/wyze-native/credentials))
+4. Click **Discover Devices** — the plugin will find all your Wyze cameras
+
+## Plugin Settings
+
+| Setting | Description | Default |
+|---------|-------------|---------|
+| **Email** | Wyze account email | — |
+| **Password** | Wyze account password | — |
+| **API Key** | Wyze Developer API Key | — |
+| **Key ID** | Wyze Developer Key ID | — |
+| **Idle Timeout** | Seconds before disconnecting an idle P2P session | 30 |
+
+## Camera Settings
+
+Each discovered camera has its own settings:
+
+| Setting | Description | Default |
+|---------|-------------|---------|
+| **Resolution** | Video resolution: 1080p, 720p, 360p, 2K | 1080p |
+| **Bitrate** | Video bitrate: max or sd | max |
+
+> [!NOTE]
+> Changing resolution or bitrate will restart the P2P connection.
+
+## How It Works
+
+```
+Wyze Cloud API ──(discovery only)──► Camera info (IP, UID, ENR, MAC)
+                                           │
+                                           ▼
+Scrypted ◄──(local P2P/DTLS)──► Wyze Camera (LAN)
+   │
+   ▼
+Viewers (WebRTC, HLS, RTSP)
+```
+
+1. **Discovery** — The plugin logs into the Wyze cloud to discover cameras and their P2P connection parameters
+2. **P2P Connection** — When you view a camera, Scrypted connects directly to it over UDP using the TUTK/DTLS protocol
+3. **Streaming** — H264 video frames are received and served to viewers via Scrypted's rebroadcast system
+4. **Idle Teardown** — When no viewers are watching, the P2P connection is closed after the idle timeout
+
+## Supported Cameras
+
+The plugin works with Wyze cameras that support DTLS P2P connections. This includes most modern Wyze cameras:
+
+- Wyze Cam v3 / v3 Pro
+- Wyze Cam Pan v2 / v3
+- Wyze Cam OG / OG Telephoto
+- Wyze Cam Floodlight v2
+- Wyze Video Doorbell v2
+
+> [!WARNING]
+> Very old Wyze cameras (v1, v2 without firmware updates) may not support DTLS and won't work with this plugin. These cameras will be skipped during discovery (shown as having no IP address).
+
+## Troubleshooting
+
+### "Missing Wyze credentials"
+Configure your email, password, API Key, and Key ID in the plugin settings.
+
+### Camera shows as offline
+The camera may be powered off or not connected to WiFi. Check the Wyze app to verify the camera is online.
+
+### Connection timeout
+Ensure the camera is on the same local network as Scrypted. The P2P connection requires direct UDP access to the camera's IP address on port 32761.
+
+### "MFA required" error
+The plugin doesn't support MFA. Disable MFA on your Wyze account or use a secondary account without MFA.
+
+### Stream stops after some time
+The P2P connection may have been interrupted. The plugin will automatically reconnect on the next stream request. Check the idle timeout setting if the connection drops too quickly.

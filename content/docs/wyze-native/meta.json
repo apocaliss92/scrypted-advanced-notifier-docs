@@ -1,0 +1,8 @@
+{
+  "title": "Wyze Native",
+  "collapsible": true,
+  "pages": [
+    "getting-started",
+    "credentials"
+  ]
+}
