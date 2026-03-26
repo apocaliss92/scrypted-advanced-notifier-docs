@@ -85,6 +85,7 @@ Discovery uses Home Assistant device-based discovery. Topic prefix: `scrypted-an
 | `{class}_last_recognized` | sensor | label | Face/plate only |
 | `{class}_objects` | sensor | count | animal, person, vehicle only |
 | `battery` | sensor | 0–100 % | If Battery interface |
+| `charger` | binary_sensor | `true` / `false` | If Charger interface — `true` when charging or trickle-charging |
 | `online` | binary_sensor | `true` / `false` | If Online interface |
 | `sleeping` | binary_sensor | `true` / `false` | If Sleep interface |
 | `recording_enabled` | switch | `true` / `false` | If VideoRecorder |
@@ -127,15 +128,16 @@ Discovery uses Home Assistant device-based discovery. Topic prefix: `scrypted-an
 
 ### Plugin (scrypted-an-plugin)
 
-| Entity | Domain | Values |
-|--------|--------|--------|
-| `notifications_enabled` | switch | `true` / `false` |
-| `rpc_objects` | sensor | count |
-| `rss_memory` | sensor | MB |
-| `heap_memory` | sensor | MB |
-| `pending_results` | sensor | count |
-| `{rule_slug}_active` | switch | `true` / `false` |
-| `{rule_slug}_running` | binary_sensor | `true` / `false` |
+| Entity | Domain | Values | Condition |
+|--------|--------|--------|-----------|
+| `notifications_enabled` | switch | `true` / `false` | Always |
+| `rpc_objects` | sensor | count | Always |
+| `rss_memory` | sensor | MB | Always |
+| `heap_memory` | sensor | MB | Always |
+| `pending_results` | sensor | count | Always |
+| `nvr_storage_health` | binary_sensor | `true` / `false` | If NVR storage paths are configured — `true` when any path is not mounted or inaccessible (device class `problem`). Checked every 5 minutes |
+| `{rule_slug}_active` | switch | `true` / `false` | Always |
+| `{rule_slug}_running` | binary_sensor | `true` / `false` | Always |
 
 ### People Tracker (scrypted-an-people-tracker)
 
