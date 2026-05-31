@@ -1,0 +1,101 @@
+---
+title: E-mail Push (Battery Cameras)
+description: Configure the embedded SMTP intake so battery cameras deliver reliable motion alerts
+---
+
+# E-mail Push for Battery Cameras
+
+Battery cameras (Argus, Go, …) can't keep a TCP push subscription alive while sleeping, so motion alerts over the native Baichuan protocol get dropped. The plugin ships an **embedded SMTP intake** — the camera sends e-mail on motion and the plugin turns each delivery into the same `motionDetected` event you'd get from a wired camera.
+
+The intake is a **singleton sub-device** named *Reolink E-mail Push Server* that appears under the plugin provider as soon as you open the plugin for the first time.
+
+## When you need it
+
+| Camera type | E-mail Push relevant? |
+|-------------|----------------------|
+| Wired camera (RLC, E1, …) | Optional — native Baichuan push already works |
+| Battery camera **without** hub (Argus, Go) | **Yes** — most reliable alert path |
+| Battery camera **attached to a HomeHub / NVR** | No — the hub handles mail centrally |
+| NVR / Hub child channels | No — same reason |
+| Multifocal lens children (Trackmix lenses) | No — share the parent's connection |
+
+The plugin hides the E-mail Push group on cameras where it doesn't apply.
+
+## One-time server setup
+
+1. **Open the *Reolink E-mail Push Server* device.** It's created automatically the first time you open the plugin.
+2. **Review credentials.** A random `nodelink-<hex>` username and 18-byte base64url password are generated on first construction and shown in the **Auth** group. Use *Regenerate random credentials* to rotate them (you'll need to re-run Auto-configure on every camera afterwards).
+3. **Confirm defaults.** Out of the box: `port=2525`, `bindHost=0.0.0.0`, `domain=nodelink.local`, `requireAuth=true`, `tls=false`. These work on most LANs without changes.
+4. **Check the recommended camera-facing host.** The *Recommended camera-facing host* readonly field shows the LAN IP the cameras should hit. If your Scrypted host has multiple interfaces and the wrong one is picked, set **Bind host** to the correct value.
+5. **Enabled** stays on by default; toggle it off to stop the SMTP server without uninstalling.
+
+> [!NOTE]
+> Saving any field on the server device hot-restarts the SMTP intake — no manual stop/start needed.
+
+## Per-camera setup
+
+You have two equivalent entry points; pick the one closer to where you already are:
+
+### From the server device
+
+Open the **Actions** group on the *Reolink E-mail Push Server* device → **Auto-configure a camera** select. Pick a camera, click Save. The select resets after each apply so it never silently re-runs. NVR-attached cameras don't appear in the list.
+
+### From the camera page
+
+Open the camera's Settings → **E-mail Push** group → **Auto-configure from Email Push Server**. Same effect, with two extra knobs:
+
+- **Trigger events** — `MD` / `people` / `vehicle` (default: all three). Their schedule on the camera is flipped to 24/7 ON. Existing slots for other event types are left untouched.
+- **Attachment** — `picture` / `video` / `none` (default: `picture`). `picture` is recommended because it lets downstream consumers (MQTT image entities, Home Assistant) publish the snapshot.
+
+## What Auto-configure writes to the camera
+
+| Camera field | Source |
+|--------------|--------|
+| SMTP server | Recommended host of the server device |
+| Port | Server device → Port |
+| Username | Server device → Auth username (auto-wrapped as `<user@domain>` for MAIL FROM RFC compliance) |
+| Password | Server device → Auth password |
+| Recipient | `cam-<nativeId>@<domain>` (per-camera intake address) |
+| Sender nickname | Camera name |
+| Schedule | 24/7 ON for the selected Trigger events |
+
+## Verifying delivery
+
+The camera's E-mail Push group exposes three diagnostics:
+
+- **Send test e-mail** — makes the camera perform a real SMTP send against its saved target. Returns within ~60s. Success / 482 failure shown in the status row + plugin console.
+- **Refresh status** — reads the camera's own SMTP config (Baichuan cmd 42) and renders it as `Target: host:port · Recipient: cam-<id>@<domain> · refreshed <ts>`. Reading wakes battery cameras, so it's never automatic — only when you click.
+- **Camera-side SMTP target** (readonly row) — last refreshed value above.
+
+On the server device side, the **Recent e-mails** group shows the last 20 accepted deliveries with timestamp + inferred type + subject (in-memory ring, cleared on plugin restart).
+
+## Manual setup (Reolink app)
+
+If you'd rather configure the camera from the Reolink mobile app instead of clicking Auto-configure:
+
+- **SMTP server** — the *Recommended camera-facing host* shown in the server device
+- **Port** — `2525` (or whatever you changed it to)
+- **Sender / username** — the auto-generated `nodelink-<hex>` (the camera also accepts the `<user@domain>` form)
+- **Password** — from the Auth group
+- **TLS / SSL** — off, unless you've configured `cert.pem` + `key.pem` in the TLS directory and turned **Enable STARTTLS** on
+- **Receiver** — `cam-<nativeId>@<domain>` (copy it from the camera's E-mail Push tab)
+- **Schedule** — 24/7 ON for the event types you care about
+
+## Troubleshooting
+
+| Symptom | Likely cause |
+|---------|--------------|
+| Status row stays at *not loaded* | Click *Refresh status* — reads are never automatic so battery cameras don't get woken unnecessarily |
+| *Test e-mail* returns 482 | Camera can reach the server's `host:port` but AUTH or recipient is wrong. Re-run Auto-configure |
+| SMTP intake rejects with `550 Unknown recipient` | The recipient nativeId doesn't match any registered camera (regenerated UID, moved cameras, NVR-child). Re-run Auto-configure from the camera page so the local-part matches the current nativeId |
+| AUTH fails | Credentials were regenerated on the server without re-running Auto-configure. Either rotate the camera-side username/password to the new values or re-run Auto-configure |
+| Server log shows `[smtp] [SERVER cid=…] …` | Normal — internal smtp-server logger lines, useful for connection-level debugging |
+| Server log shows the auto-detected hostname can't be reverse-resolved | Cosmetic — `getHostByAddr ENOTFOUND` doesn't block delivery |
+| SMTP delivers `250 OK` but `motionDetected` doesn't flip in Scrypted | Plugin version mismatch — bundled `nodelink-js` must be `≥ 0.4.32` for the unified event path. Check `package.json` of the deployed plugin |
+| Snapshot in HA / MQTT image entity stays stale after motion | The plugin proactively refreshes the snapshot cache on every motion event for battery cameras (5s debounce). If you don't see the trigger frame, confirm the cam is in `transport: udp` and the *Battery Update Interval* isn't masking the refresh |
+
+## Security notes
+
+- `requireAuth: true` is the default and strongly recommended. With it off, anyone on your LAN can inject motion events into your Scrypted instance.
+- STARTTLS is supported but optional — for a local-network-only intake plain TCP is acceptable. Enable TLS if your Scrypted host is exposed beyond the trusted segment.
+- The intake binds `0.0.0.0:2525` by default; lock it down with **Bind host** to a specific interface if you don't want it reachable from every subnet.
