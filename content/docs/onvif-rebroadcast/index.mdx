@@ -11,16 +11,18 @@ Scrypted mixin plugin that exposes your cameras as fully compliant **ONVIF devic
 
 - **WS-Discovery** — Cameras are automatically discoverable via ONVIF multicast (239.255.255.250:3702)
 - **RTSP stream mapping** — All Scrypted rebroadcast streams (main, sub, third) are exposed as ONVIF media profiles
+- **Unique IP & MAC per camera** — Docker macvlan proxy containers give each camera its own network identity (required for UniFi Protect)
 - **Event forwarding** — Motion and object detection events from Scrypted are forwarded as ONVIF events via PullPoint subscription
 - **PTZ support** — If the camera has PTZ capabilities in Scrypted, they are exposed via ONVIF PTZ service
 - **Two-way audio** — Intercom/audio output capabilities are advertised when available
 - **WS-Security authentication** — UsernameToken Digest and HTTP Basic auth support
-- **Deterministic identity** — Each camera gets a stable UUID and port across restarts
+- **Deterministic identity** — Each camera gets a stable UUID, IP, MAC, and port across restarts
 - **Per-camera configuration** — Enable/disable, custom port, debug logging per camera
 
 ## Prerequisites
 
 - **Scrypted Rebroadcast plugin** must be installed and running — this plugin reads the RTSP rebroadcast URLs from it
+- **Docker socket** mounted at `/var/run/docker.sock` in the Scrypted container (required for unique IP mode)
 
 ## Installation
 
@@ -35,6 +37,11 @@ Scrypted mixin plugin that exposes your cameras as fully compliant **ONVIF devic
 |---------|-------------|
 | **Username** | Username for ONVIF authentication (leave empty to disable) |
 | **Password** | Password for ONVIF authentication |
+| **Auto-assign unique IPs** | Enable automatic proxy container creation for unique IPs/MACs |
+| **IP range start** | First IP address to assign to cameras (e.g. `192.168.1.240`) |
+| **Network interface** | Parent interface for the macvlan Docker network (e.g. `br0`) |
+| **Subnet prefix length** | CIDR prefix for the macvlan network (e.g. `23` for /23) |
+| **Gateway** | Default gateway for the macvlan network (e.g. `192.168.1.1`) |
 
 ## Per-Camera Settings
 
@@ -42,9 +49,61 @@ Each camera gets its own settings under the **ONVIF Rebroadcast** group:
 
 | Setting | Description |
 |---------|-------------|
+| **ONVIF IP address** | Manual unique IP for this camera (leave empty when auto-assign is enabled) |
 | **ONVIF port** | Port for this camera's ONVIF server (leave empty for auto-assignment) |
 | **ONVIF server enabled** | Enable/disable the ONVIF server for this camera |
 | **Debug events** | Enable verbose logging for motion and object detection events |
+
+## UniFi Protect Setup
+
+UniFi Protect identifies third-party ONVIF cameras by MAC address. When all virtual cameras share the host's MAC, the NVR sees them as a single device — adding a second camera overwrites the first.
+
+This plugin solves this by giving each camera its own **unique IP and MAC address** on the network via Docker macvlan proxy containers.
+
+### Docker Socket
+
+The plugin needs access to the Docker socket to create proxy containers. Add this path mapping to your Scrypted container:
+
+| Container Path | Host Path |
+|---|---|
+| `/var/run/docker.sock` | `/var/run/docker.sock` |
+
+### IP Range Selection
+
+Choose IPs **outside your DHCP pool** on the same subnet as your UniFi controller. For example, if your router assigns `192.168.1.2–200` via DHCP, use `192.168.1.240` as the start.
+
+### How It Works
+
+```
+UniFi Protect                    Docker macvlan proxy              Scrypted container
+(192.168.1.x)                    (192.168.1.240, unique MAC)       (192.168.4.40)
+     |                                  |                                |
+     |--- ONVIF (port 8000) ---------->|--- TCP proxy (port 18000) --->|  ONVIF server
+     |--- RTSP  (port 554)  ---------->|--- TCP proxy (port 42917) -->|  RTSP rebroadcast
+```
+
+Each camera gets its own lightweight `alpine/socat` proxy container with:
+- A unique IP address on your LAN
+- A unique MAC address (deterministic, based on device ID)
+- TCP proxies for both ONVIF (port 8000) and RTSP (port 554+) traffic
+
+Proxy containers auto-restart and are fully managed via the Docker API. They are cleaned up when the plugin shuts down.
+
+### Adding Cameras in UniFi Protect
+
+1. Install and configure the plugin in Scrypted
+2. Enable **Auto-assign unique IPs** and configure the IP range, network interface, subnet, and gateway
+3. The plugin automatically creates proxy containers (visible via `docker ps | grep onvif`)
+4. In UniFi Protect: **Settings > Cameras > Add Camera > ONVIF**
+5. Enter each camera's assigned IP with port `8000`
+6. Enter the ONVIF username/password you configured
+
+### Unraid Notes
+
+- If your Scrypted container uses `Custom: br0.2` (ipvlan), set the **Network interface** to `br0` instead — this gives each proxy container a unique MAC
+- The plugin creates a Docker network called `onvif_cameras` for the proxy containers
+- Proxy containers are named `onvif-proxy-{deviceId}` and use the `unless-stopped` restart policy
+- The `alpine/socat` image is pulled automatically on first use (requires internet access)
 
 ## ONVIF Services
 
@@ -56,7 +115,7 @@ The plugin implements the following ONVIF services per camera:
 - `GetCapabilities` — Advertises Media, PTZ, Events based on device capabilities
 - `GetServices` — Lists all available service endpoints
 - `GetScopes` — ONVIF scopes (name, hardware, profile, type)
-- `GetNetworkInterfaces` — Network information
+- `GetNetworkInterfaces` — Network information with unique MAC per camera
 
 ### Media Service (`/onvif/media_service`)
 - `GetProfiles` — One profile per RTSP rebroadcast stream with video/audio configuration
@@ -79,8 +138,9 @@ The plugin implements the following ONVIF services per camera:
 1. When Scrypted loads the plugin, it attaches as a mixin to every camera/doorbell
 2. The mixin discovers all RTSP rebroadcast URLs from the Rebroadcast plugin
 3. An HTTP server starts on a per-camera port, serving ONVIF SOAP responses
-4. WS-Discovery announces the camera on the local network via UDP multicast
-5. Motion and object detection events from Scrypted are queued and served via PullPoint
+4. If auto-assign IPs is enabled, a Docker macvlan proxy container is created with a unique IP and MAC
+5. WS-Discovery announces the camera on the local network via UDP multicast
+6. Motion and object detection events from Scrypted are queued and served via PullPoint
 
 ## Troubleshooting
 
@@ -88,6 +148,8 @@ The plugin implements the following ONVIF services per camera:
 - **Authentication errors** — Verify username/password match in both plugin settings and the ONVIF client
 - **No streams in profiles** — Make sure the Rebroadcast plugin is installed and the camera has RTSP rebroadcast URLs configured
 - **Port conflicts** — If a port is in use, the plugin automatically assigns a random available port and saves it
+- **UniFi sees one camera** — Enable auto-assign IPs; without unique MACs, UniFi treats all cameras as the same device
+- **Proxy containers not starting** — Check that Docker socket is mounted and `alpine/socat` image is available (in air-gapped environments, pre-pull it: `docker pull alpine/socat`)
 - **Enable Debug events** to see detailed motion/detection event forwarding in the console
 
 <PluginChangelog slug="onvif-rebroadcast" />
