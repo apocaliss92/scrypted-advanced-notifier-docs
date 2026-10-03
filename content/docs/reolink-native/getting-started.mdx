@@ -35,4 +35,4 @@ Videoclips are opt-in with auto-download to speed up loading. Reolink doesn't st
 
 ## Battery Cameras Without Hub
 
-If battery cameras are not attached to a hub, motion during standby cannot be detected. PIR events use a subGHz signal that only the HomeHub can receive.
+If battery cameras are not attached to a hub, the native Baichuan TCP push drops while sleeping. Use [E-mail Push](/docs/reolink-native/email-push) and/or [Baichuan Webhook (HaCfg)](/docs/reolink-native/baichuan-webhook) for sleep-time motion. HaCfg is armed only when you click **Auto-configure Baichuan Webhook** (never on init). PIR over subGHz still requires a HomeHub when that path is the only option.

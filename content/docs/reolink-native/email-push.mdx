@@ -99,3 +99,7 @@ If you'd rather configure the camera from the Reolink mobile app instead of clic
 - `requireAuth: true` is the default and strongly recommended. With it off, anyone on your LAN can inject motion events into your Scrypted instance.
 - STARTTLS is supported but optional — for a local-network-only intake plain TCP is acceptable. Enable TLS if your Scrypted host is exposed beyond the trusted segment.
 - The intake binds `0.0.0.0:2525` by default; lock it down with **Bind host** to a specific interface if you don't want it reachable from every subnet.
+
+## Related
+
+If the firmware supports HaCfg (cmd 806), prefer [Baichuan Webhook](/docs/reolink-native/baichuan-webhook) and set **Battery sleep push → Notification method** so Scrypted does not double-count SMTP and HTTP. HaCfg is never written on init — only via its Auto-configure button.

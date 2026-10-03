@@ -1,0 +1,58 @@
+---
+title: Baichuan Webhook (Battery Cameras)
+description: HaCfg HTTP wake/sleep push as an alternative to E-mail Push — configure only when you click Auto-configure
+---
+
+# Baichuan Webhook (HaCfg) for Battery Cameras
+
+Some Reolink firmwares (notably Video Doorbell Gen 2 Wired Power) can POST wake/sleep JSON to an HTTP URL via Baichuan **HaCfg** (cmd 806 get / 807 set) while the control socket is idle-disconnected. This is the same mechanism Home Assistant’s `reolink_aio` uses (`bc_webhook`).
+
+The plugin receives those POSTs on its existing Scrypted HTTP endpoint:
+
+`…/webhook/baichuan/{deviceId}`
+
+## When you need it
+
+| Camera type | Baichuan Webhook relevant? |
+|-------------|---------------------------|
+| Battery / doorbell with HaCfg support (probe cmd 806) | Yes — lighter than SMTP when available |
+| Battery camera without HaCfg | No — use [E-mail Push](/docs/reolink-native/email-push) |
+| Battery camera on HomeHub / NVR | No — hub path |
+| Wired PoE with always-on socket | Optional — native Baichuan push already works |
+
+Support is **probe-based** (GET cmd 806 returns a parseable `<HaCfg>`). Do **not** use CGI `Support.webhook` — on many doorbells that flag is `0` while HaCfg still works.
+
+## Notification method (avoid duplicate events)
+
+Both E-mail Push and HaCfg can stay configured on the camera (e.g. if Home Assistant also uses HaCfg, or you previously armed SMTP). Scrypted tags each event with `source` (`baichuan` / `email` / `baichuanWebhook`) and filters by preference:
+
+Per-camera Settings → **Battery sleep push → Notification method**
+
+| Value | Events Scrypted considers |
+|-------|---------------------------|
+| `auto` (default) | HaCfg webhook when the firmware supports cmd 806; otherwise E-mail Push |
+| `webhook` | Only HaCfg webhook events |
+| `email` | Only E-mail Push events |
+
+Native Baichuan socket events always pass (not filtered).
+
+## Configuration is manual — never on init
+
+**Auto-configure Baichuan Webhook** writes the camera’s HaCfg URL to this plugin’s Scrypted endpoint. It runs **only when you click the button** — never during camera init — so Scrypted will not overwrite another system’s HaCfg (for example Home Assistant).
+
+1. Open the battery camera’s Settings → **Battery sleep push**
+2. Confirm **Notification method** (`auto` is fine for most setups)
+3. Check **Status** — after probe it should mention HaCfg supported (or unsupported)
+4. Click **Auto-configure Baichuan Webhook** if you want *this* Scrypted instance to own the HaCfg URL
+
+E-mail Push remains independent: use **Auto-configure from Email Push Server** when you want SMTP. Changing the notification method only changes which events Scrypted *listens to*; it does not disable EmailTask or HaCfg on the camera.
+
+## Verifying
+
+- Trigger PIR / doorbell while the camera would otherwise be idle-disconnected
+- Camera console should log `Baichuan Webhook event=wake reason=pir` (or `doorbell`)
+- `motionDetected` / doorbell binary sensor should flip like a wired camera
+
+## Related
+
+- [E-mail Push](/docs/reolink-native/email-push) — SMTP alternative when HaCfg is unavailable or preferred
