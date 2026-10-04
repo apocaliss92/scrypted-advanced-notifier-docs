@@ -30,7 +30,7 @@ Per-camera Settings → **Battery sleep push → Notification method**
 
 | Value | Events Scrypted considers |
 |-------|---------------------------|
-| `auto` (default) | HaCfg webhook when the firmware supports cmd 806; otherwise E-mail Push |
+| `auto` (default) | Both Email and HaCfg until the first real HaCfg delivery (wake/cmd 33); then webhook only. If cmd 806 probe fails, Email only |
 | `webhook` | Only HaCfg webhook events |
 | `email` | Only E-mail Push events |
 
@@ -47,10 +47,23 @@ Native Baichuan socket events always pass (not filtered).
 
 E-mail Push remains independent: use **Auto-configure from Email Push Server** when you want SMTP. Changing the notification method only changes which events Scrypted *listens to*; it does not disable EmailTask or HaCfg on the camera.
 
+## Wired Power Mode (Doorbell Gen 2)
+
+In Wired Power Mode the doorbell often never sleeps. HaCfg then forwards normal Baichuan **cmd 33** alarm XML instead of `wake`/`sleep`:
+
+| Situation | Camera report | Scrypted event |
+|-----------|---------------|----------------|
+| Motion | `status=none`, `AItype=other` | motion |
+| Person | `status=none`, `AItype=people` | people (+ motion) |
+| Doorbell press | `status=visitor` | doorbell |
+| Idle | `status=none`, `AItype=none` | ignored |
+
+Plugin ≥ 0.5.69 / nodelink-js ≥ 0.12.1 handle these POSTs. With **Notification method = auto**, E-mail Push stays accepted until the first successful HaCfg delivery (so a probe alone cannot mute SMTP).
+
 ## Verifying
 
-- Trigger PIR / doorbell while the camera would otherwise be idle-disconnected
-- Camera console should log `Baichuan Webhook event=wake reason=pir` (or `doorbell`)
+- Trigger PIR / doorbell (sleeping battery) → log `Baichuan Webhook event=wake reason=pir` (or `doorbell`)
+- Wired Power doorbell → log `Baichuan Webhook cmd=33 → motion|people|doorbell`
 - `motionDetected` / doorbell binary sensor should flip like a wired camera
 
 ## Related
